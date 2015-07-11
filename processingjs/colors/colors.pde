@@ -1,4 +1,4 @@
-size(400, 400);
+size(800, 400);
 
 smooth();
 
@@ -6,32 +6,50 @@ background(255, 255, 255);
 
 strokeWeight(10);
 
-float red = random(50, 200);
-float green = random(50, 200);
-float blue = random(50, 200);
-float x = random(0, width);
-float x2 = random(0, width);
-float alpha = random(50, 80);
-  
-for(int i = 0; i < 400; i++) {
+int red = random(50, 200);
+int green = random(50, 200);
+int blue = random(50, 200);
+int alpha = random(50, 80);
 
-  float redshift = random(-20, 20);
-  float greenshift = random(-20, 20);
-  float blueshift = random(-20, 20);
+int TOP = 0;
+int RIGHT = width;
+int LEFT = 0;
+int BOTTOM = height;
+
+int startx = random(0, width);
+int starty = TOP;
+int endx = random(0, width);
+int endy = BOTTOM;
+
+int numLines = 400;
+
+int redshift, greenshift, blueshift;
   
-  float newred = red + redshift;
+for(int i = 0; i < numLines; i++) {
+
+  // set colors and draw line
+  stroke(red, green, blue, alpha);
+  line(startx, starty, endx, endy);
+  
+  // slighlty mutate the colors
+  redshift = random(-20, 20);
+  greenshift = random(-20, 20);
+  blueshift = random(-20, 20);
+  
+  int newred = red + redshift;
   red = abs((newred > 255 ? 255 - (newred - 255) : newred));
  
-  float newgreen = green + greenshift;
+  int newgreen = green + greenshift;
   green = abs((newgreen > 255 ? 255 - (newgreen - 255) : newgreen));
 
-  float newblue = blue + blueshift;
+  int newblue = blue + blueshift;
   blue = abs((newblue > 255 ? 255 - (newblue - 255) : newblue));
   
-  x = random(0, width);
-  x2 = random(0, width);
-  stroke(red, green, blue, alpha);
-
-  line(x, 0, x2, height);
+  // make the next line start at the end of the last line, and draw a random end point
+  startx = endx;
+  starty = endy;
+  endx = random(0, width);
+  endy = random(0, height);
+  
 
 }
