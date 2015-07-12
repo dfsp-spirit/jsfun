@@ -29,6 +29,21 @@ int BORDER_LEFT = 3;
 
 int numLines = 400;
 
+string bname(int c) {
+   if(c == BORDER_TOP) {
+       return "TOP";
+   }
+   else if(c == BORDER_LEFT) {
+       return "LEFT";
+   }
+   else if(c == BORDER_BOTTOM) {
+       return "BOTTOM";
+   }
+   else if(c == BORDER_RIGHT) {
+       return "RIGHT";
+   }
+}
+
 int redshift, greenshift, blueshift;
 int canvasCenterX = (int) width / 2;
 int canvasCenterY = (int) height / 2;
@@ -70,7 +85,7 @@ int get_border_clostest_to(int x, int y) {
 		    // lower right quarter
 			int distToBottom = height - y;
 			int distToRight = width - x;
-			return (distToBottom < distToLeft ? BORDER_BOTTOM : BORDER_LEFT);
+			return (distToBottom < distToRight ? BORDER_BOTTOM : BORDER_RIGHT);
 		}	
 	}
 }
@@ -81,6 +96,12 @@ int draw_border_but(int current) {
        newBorder = floor(rand(0, 4));
    }
    return newBorder;
+}
+
+void doLog(string msg) {
+    var el = document.getElementById('log');
+  var elContent = el.innerHTML;
+  el.innerHTML = elContent + msg + "<br />\n";
 }
 
 int current_border, next_border;
@@ -102,6 +123,7 @@ for(int i = 0; i < numLines; i++) {
   
   // get border closest to new start point
   current_border = get_border_clostest_to(startx, starty);
+  doLog('At iteration ' + i + ', current_border is ' + current_border + ".");
   //next_border = draw_border_but(current_border);
   
   // ... and draw a new random end point
