@@ -10,6 +10,9 @@ int OBJ_RADIUS = 2;
 int OBJ_XSPEED = 3;
 int OBJ_YSPEED = 4;
 
+float MAX_SPEED = 2.0;
+float MIN_SPEED = -2.0;
+
 // Set number of circles
 int count = 20;
 // Set maximum and minimum circle size
@@ -30,7 +33,8 @@ int lockedOffsetY;
 void mousePressed () {
   // increase player thrust
     pressingmouse = true;
-    p[OBJ_YSPEED] += .01; 
+    
+        
 }
 // If user releases mouse...
 void mouseReleased() {
@@ -66,6 +70,20 @@ void setup() {
 void draw() {
   // Fill background black
   background(0);
+  
+  // compute player movement
+  if(pressingmouse) {
+    p[OBJ_YSPEED] -= .1;
+    if(p[OBJ_YSPEED] < MIN_SPEED) {
+        p[OBJ_YSPEED] = MIN_SPEED;
+    }
+  }
+  else {
+      p[OBJ_YSPEED] += .1;
+  if(p[OBJ_YSPEED] > MAX_SPEED) {
+        p[OBJ_YSPEED] = MAX_SPEED;
+    }
+  }
   
   // Draw player
   fill(187, 64, 64, 100);
