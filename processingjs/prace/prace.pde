@@ -21,7 +21,7 @@ int minSize = 20;
 // Build float array to store circle properties
 float [] p = new float[5];  // player
 float[][] e = new float[count][5];
-// Set size of dot in circle center
+// Set size of dot in center of players and enemies
 float ds=2;
 // Set drag switch to false
 boolean pressingmouse = false;
@@ -29,6 +29,17 @@ boolean pressingmouse = false;
 int lockedCircle; 
 int lockedOffsetX;
 int lockedOffsetY;
+
+// load a font for usage later
+PFont font;
+font = loadFont("DINBold.ttf"); 
+textFont(font, 12); 
+
+// scores
+int score = 0;
+int maxScore = 0;
+
+
 // If user presses mouse...
 void mousePressed () {
   // increase player thrust
@@ -42,22 +53,31 @@ void mouseReleased() {
   pressingmouse = false;
 }
 
+// lower and upper borders at player position
+int playerBorderYTop;
+int playerBorderYBottom;
+
+
 // Set up canvas
 void setup() {
   // Frame rate
   frameRate(60);
   // Size of canvas (width,height)
   size(800, 600);
+  playerBorderYTop = 20;
+  playerBorderYBottom = height - 20;
+
   // Stroke/line/border thickness
   strokeWeight(1);
   // Initiate array with random values for enemies
   for (int j=0;j< count;j++) {
     e[j][OBJ_XPOS]=random(width/2, width); // X 
-    e[j][OBJ_YPOS]=random(height); // Y
     e[j][OBJ_RADIUS]=random(minSize, maxSize); // Radius        
-    e[j][OBJ_XSPEED]=random(-0.2, -0.1); // X Speed
+    e[j][OBJ_YPOS]=random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]); // Y    
+    e[j][OBJ_XSPEED]=random(-2.0, -1.0); // X Speed
     e[j][OBJ_YSPEED]=0.; // Y Speed
   }
+  
   // place player
   p[OBJ_XPOS] = 50;
   p[OBJ_YPOS] = height/2;
@@ -71,26 +91,58 @@ void draw() {
   // Fill background black
   background(0);
   
+  // draw upper and lower borders
+  fill(80, 80, 80, 255);
+  if(p[OBJ_YPOS] < playerBorderYTop + p[OBJ_RADIUS]/2 || p[OBJ_YPOS] > playerBorderYBottom - p[OBJ_RADIUS]/2) {
+    fill(120, 40, 40, 255); // slash borders red if player gets very close
+  }
+  rect(0, 0, width, playerBorderYTop);
+  rect(0, playerBorderYBottom, width, 20);
+  
+  // print score in upper right corner
+  fill(255, 255, 255, 255);
+  text("Score: " + score + " Best: " + maxScore + "", width/2, 20);
+  score++;	// player gets 1 point for every frame he survived
+  if(score > maxScore) { maxScore = score; }
+  
   // compute player movement
   if(pressingmouse) {
-    p[OBJ_YSPEED] -= .1;
+    p[OBJ_YSPEED] -= 1.0;
     if(p[OBJ_YSPEED] < MIN_SPEED) {
         p[OBJ_YSPEED] = MIN_SPEED;
     }
   }
   else {
-      p[OBJ_YSPEED] += .1;
+      p[OBJ_YSPEED] += 1.0;
   if(p[OBJ_YSPEED] > MAX_SPEED) {
         p[OBJ_YSPEED] = MAX_SPEED;
     }
   }
   
+  
+  // Move player according to current speed
+  p[OBJ_XPOS] += p[OBJ_XSPEED];
+  p[OBJ_YPOS] += p[OBJ_YSPEED];
+  
+  text("Player at: (" + p[OBJ_XPOS] + " / " + p[OBJ_YPOS] + "), borders at " + playerBorderYTop + " and " + playerBorderYBottom + ".", width/2, 40);
+  
+  // check whether player has crashed into the upper or lower border
+  if(p[OBJ_YPOS] < playerBorderYTop || p[OBJ_YPOS] > playerBorderYBottom) {
+    // player crashed, reset him and reset current score to 0
+    p[OBJ_XPOS] = 50;
+    p[OBJ_YPOS] = height/2;
+    p[OBJ_XSPEED] = 0;
+    p[OBJ_YSPEED] = 0;
+    score = 0;
+  }
+  
   // Draw player
   fill(187, 64, 64, 100);
-    ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
-    // Move player
-    p[OBJ_XPOS]+=p[OBJ_XSPEED];
-    p[OBJ_YPOS]+=p[OBJ_YSPEED];
+  ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
+  noStroke();      
+  // Draw dot in center of player
+  rect(p[OBJ_XPOS]-ds, p[OBJ_YPOS]-ds, ds*2, ds*2);
+  
   
   // Begin looping through enemy array
   for (int j=0;j< count;j++) {
@@ -132,8 +184,8 @@ void draw() {
 
     // otherwise set center dot color to black.. 
     fill(0, 0, 0, 255);
-    // and set line color to turquoise.
-    stroke(64, 128, 128, 255);
+    
+    stroke(64, 128, 128, 255);		// set line color to turquoise.
     
 
     // Loop through all circles
@@ -147,19 +199,37 @@ void draw() {
 
     
     
-    // Check distance to player: if we are close:
-    if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 2) ) {
-        // check whether we are very close
-        if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam)) ) {
-            stroke(187, 0, 0, 255);
-        }
-        // Stroke a line from current enemy to player
-        line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);
+    // Check distance to player: if we are getting close:
+    if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 6) ) {
+      stroke(255, 255, 255, 255);		// set line color to white.
+      // Stroke a line from current enemy to player
+      line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);
+      score++; // player gets 1 bonus point per frame if he is close to enemy
+      
+      // check whether we are getting closer
+      if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 2) ) {
+	stroke(64, 128, 128, 255);		// set line color to turquoise.
+	line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);  // Stroke a line from current enemy to player
+	score++; // player gets another bonus point per frame if he is *very* close to enemy
+	
+	  // check whether we are too close and the enemy can kill the player
+	  if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam)) ) {
+	      // set color to red (shooting laser)
+	      stroke(187, 0, 0, 255);
+	      line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);	// Stroke a line from current enemy to player
+	      // player killed by enemy, reset him and reset current score to 0
+	      p[OBJ_XPOS] = 50;
+	      p[OBJ_YPOS] = height/2;
+	      p[OBJ_XSPEED] = 0;
+	      p[OBJ_YSPEED] = 0;
+	      score = 0;
+	  }	  	  
+      }
     }
     
     // Turn off stroke/border
     noStroke();      
-    // Draw dot in center of circle
+    // Draw dot in center of this enemy
     rect(e[j][0]-ds, e[j][1]-ds, ds*2, ds*2);
   }
 }
