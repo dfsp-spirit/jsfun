@@ -55,6 +55,9 @@ int maxScoreMultiplier = 10;
 boolean playerdead = false;
 int waitFramesOnDeath = fps * 3;
 int waitedFramesSinceDeath;
+boolean playerInvuln = false;	// player is invulnerable for a short time after dying
+int waitFramesInvuln = fps * 3;
+int waitedFramesInvuln = 0;
 
 void playerkilled() {
   playerdead = true;
@@ -126,8 +129,19 @@ void draw() {
       p[OBJ_XSPEED] = 0;
       p[OBJ_YSPEED] = 0;
       score = 0;
+	  playerInvuln = true;
       playerdead = false;
+	  waitedFramesInvuln = 0;
     }
+  }
+  
+  // check whether we need to disable invulnerability again (some time after death)
+  if(playerInvuln) {
+    waitedFramesInvuln++;
+	if(waitedFramesInvuln > waitFramesInvuln) {
+	  playerInvuln = false;
+	  waitedFramesInvuln = 0;
+	}
   }
   
   // draw upper and lower borders
@@ -167,14 +181,30 @@ void draw() {
   if(p[OBJ_YPOS] < playerBorderYTop || p[OBJ_YPOS] > playerBorderYBottom) {
     // player crashed, reset him and reset current score to 0
     if(!playerdead) {
-      playerkilled();  
+	  if(playerInvuln) {
+	    // player is invulnerable. do not kill him, but do not let him move further.
+		if(p[OBJ_YPOS] < playerBorderYTop) {
+		  p[OBJ_YPOS] = playerBorderYTop;
+		}
+		if(p[OBJ_YPOS] > playerBorderYBottom) {
+		  p[OBJ_YPOS] = playerBorderYBottom;
+		}
+	  }
+	  else {
+        playerkilled();  
+	  }
     }
   }
   
   // Draw player
-  fill(187, 64, 64, 100);
+  fill(187, 64, 64, 100);	// default player color (when alive)
   if(playerdead) {
-    fill(187, 128, 128, 220);	// make player very transparent if currently dead
+    fill(187, 128, 128, 220);	// make player very transparent and less red if currently dead
+  }
+  if(playerInvuln) {
+    fill(255, 255, 255, 220);	// draw white shield around player if currently invulnerable
+	ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS] + 5, p[OBJ_RADIUS] + 5);
+	fill(187, 64, 64, 100);
   }
   ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
   noStroke();      
@@ -257,7 +287,9 @@ void draw() {
 	      line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);	// Stroke a line from current enemy to player
 	      // player killed by enemy, reset him and reset current score to 0
 	      if(!playerdead) {
-                playerkilled();  
+		        if(!playerInvuln) {
+                  playerkilled();
+                }				
 	      }
 	  }	  	  
       }
@@ -283,9 +315,9 @@ void draw() {
   }
   
   fill(255, 255, 255, 255);	// white for font
-  if(! playerdead) {   
+  if((! playerdead) && (!playerInvuln)) {	// player only gets score if he is not dead, and not invulnerable   
     textFont(font, (40 + scoreMultiplier * 5));
-    fill(255, 200 - scoreMultiplier * 20, 200 - scoreMultiplier * 20, 255);	// make score muliplier more red if it is higher
+    fill(255, 200 - scoreMultiplier * 20, 200 - scoreMultiplier * 20, 255);	// make score multiplier more red if it is higher
     text(scoreMultiplier + "x", width - 70, height - 70);    
     score += scoreMultiplier;	// player gets 1 point for every frame he survived
   }
