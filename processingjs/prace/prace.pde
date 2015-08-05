@@ -3,7 +3,7 @@
  Gameplay:
    You are the red guy. Don't crash into the ground/ceiling, and don't get hit by the blue guys.
    You get points for surviving each second, and flying closer to enemies increases score gained per second!
- written :by Tim 'spirit' Schaefer
+ written :by Tim 'spirit' Schaefer, http://rcmd.org/spirit/
  Idea and initial code based on the Processingjs.com header animation  
  MIT License  
  */
@@ -18,8 +18,11 @@ float MAX_SPEED = 2.0;
 float MIN_SPEED = -2.0;
 
 // Set number of circles
-int count = 20;
-int fps = 60;
+int count = 25;  // enemy count
+int fps = 60;  // frames per second
+int backgroundStartrailCount = 10;
+float[][] st = new float[backgroundStartrailCount][5];  // star trails, this is decoration only
+
 // Set maximum and minimum circle size
 int maxSize = 100;
 int minSize = 20;
@@ -93,13 +96,22 @@ void setup() {
 
   // Stroke/line/border thickness
   strokeWeight(1);
-  // Initiate array with random values for enemies
+  // Initiate array with more or less random values for enemies
   for (int j=0;j< count;j++) {
-    e[j][OBJ_XPOS]=random(width/2, width); // X 
+    e[j][OBJ_XPOS]=random(width/3, width); // X 
     e[j][OBJ_RADIUS]=random(minSize, maxSize); // Radius        
     e[j][OBJ_YPOS]=random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]); // Y    
     e[j][OBJ_XSPEED]=random(-2.0, -1.0); // X Speed
     e[j][OBJ_YSPEED]=0.; // Y Speed
+  }
+  
+  // generate star trails in background
+  for(int j=0;j< backgroundStartrailCount;j++) {
+    st[j][OBJ_XPOS]=random(0, width); // X 
+    st[j][OBJ_RADIUS]=random(10,15); // the length of the trail in this case        
+    st[j][OBJ_YPOS]=random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]); // Y    
+    st[j][OBJ_XSPEED]=random(-0.9, -0.6); // X Speed
+    st[j][OBJ_YSPEED]=0.; // Y Speed
   }
   
   // place player
@@ -120,6 +132,8 @@ void draw() {
     fill(255, 255, 255, 255);
     textFont(font, 20); 
     text("YOU ARE DEAD -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
+	textFont(font, 12); 
+	text("Current score reset, keeping highscore.", width/3, height/2 + 25);
     textFont(font, 12); 
     waitedFramesSinceDeath++;
     if(waitedFramesSinceDeath > waitFramesOnDeath) {	// player alive again
@@ -207,10 +221,27 @@ void draw() {
 	fill(187, 64, 64, 100);
   }
   ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
-  noStroke();      
+  noStroke();
   // Draw dot in center of player
   rect(p[OBJ_XPOS]-ds, p[OBJ_YPOS]-ds, ds*2, ds*2);
   
+  
+  // move and draw startrails in background
+  for (int j=0;j< backgroundStartrailCount;j++) {
+    st[j][OBJ_XPOS] += st[j][OBJ_XSPEED];
+	int colorShift = floor(abs(st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]) * 100.0);   // change color of startrail based on its speed
+	stroke(30 + colorShift,30 + colorShift,60 + colorShift,255);	// dark blue-ish
+	line(st[j][OBJ_XPOS], st[j][OBJ_YPOS], st[j][OBJ_XPOS] + st[j][OBJ_RADIUS], st[j][OBJ_YPOS]);
+	
+	// make them re-enter at the right if they left the screen on the left, but with randomized y position
+	float stdiam = st[j][OBJ_RADIUS] / 2;
+	if ( st[j][OBJ_XPOS] < -stdiam      ) { 
+      st[j][OBJ_XPOS] = width+stdiam;
+	  st[j][OBJ_YPOS] = random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]);
+    } 
+  }
+  
+  noStroke();
   
   // Begin looping through enemy array
   for (int j=0;j< count;j++) {
