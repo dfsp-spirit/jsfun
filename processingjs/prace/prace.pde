@@ -15,6 +15,7 @@ float MIN_SPEED = -2.0;
 
 // Set number of circles
 int count = 20;
+int fps = 60;
 // Set maximum and minimum circle size
 int maxSize = 100;
 int minSize = 20;
@@ -39,6 +40,22 @@ textFont(font, 12);
 int score = 0;
 int maxScore = 0;
 
+// frame counter
+int frame = 0;
+
+// score multiplier
+int scoreMultiplier = 1;
+int maxScoreMultiplier = 10;
+
+// handling of player death
+boolean playerdead = false;
+int waitFramesOnDeath = fps * 3;
+int waitedFramesSinceDeath;
+
+void playerkilled() {
+  playerdead = true;
+  waitedFramesSinceDeath = 0;
+}
 
 // If user presses mouse...
 void mousePressed () {
@@ -61,7 +78,7 @@ int playerBorderYBottom;
 // Set up canvas
 void setup() {
   // Frame rate
-  frameRate(60);
+  frameRate(fps);
   // Size of canvas (width,height)
   size(800, 600);
   playerBorderYTop = 20;
@@ -89,21 +106,34 @@ void setup() {
 // Begin main draw loop (called 25 times per second)
 void draw() {
   // Fill background black
+  scoreMultiplier = 1;
   background(0);
+  
+  if(playerdead) {
+    fill(255, 255, 255, 255);
+    textFont(font, 20); 
+    text("YOU ARE DEAD -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
+    textFont(font, 12); 
+    waitedFramesSinceDeath++;
+    if(waitedFramesSinceDeath > waitFramesOnDeath) {	// player alive again
+      waitedFramesSinceDeath = 0;
+      p[OBJ_XPOS] = 50;
+      p[OBJ_YPOS] = height/2;
+      p[OBJ_XSPEED] = 0;
+      p[OBJ_YSPEED] = 0;
+      score = 0;
+      playerdead = false;
+    }
+  }
   
   // draw upper and lower borders
   fill(80, 80, 80, 255);
   if(p[OBJ_YPOS] < playerBorderYTop + p[OBJ_RADIUS]/2 || p[OBJ_YPOS] > playerBorderYBottom - p[OBJ_RADIUS]/2) {
-    fill(120, 40, 40, 255); // slash borders red if player gets very close
+    fill(120, 40, 40, 255); // flash borders red if player gets very close
   }
   rect(0, 0, width, playerBorderYTop);
   rect(0, playerBorderYBottom, width, 20);
   
-  // print score in upper right corner
-  fill(255, 255, 255, 255);
-  text("Score: " + score + " Best: " + maxScore + "", width/2, 20);
-  score++;	// player gets 1 point for every frame he survived
-  if(score > maxScore) { maxScore = score; }
   
   // compute player movement
   if(pressingmouse) {
@@ -121,23 +151,27 @@ void draw() {
   
   
   // Move player according to current speed
-  p[OBJ_XPOS] += p[OBJ_XSPEED];
-  p[OBJ_YPOS] += p[OBJ_YSPEED];
+  if(! playerdead) {
+    p[OBJ_XPOS] += p[OBJ_XSPEED];
+    p[OBJ_YPOS] += p[OBJ_YSPEED];
+  }
   
-  text("Player at: (" + p[OBJ_XPOS] + " / " + p[OBJ_YPOS] + "), borders at " + playerBorderYTop + " and " + playerBorderYBottom + ".", width/2, 40);
+  //textFont(font, 12); 
+  //text("Player at: (" + p[OBJ_XPOS] + " / " + p[OBJ_YPOS] + "), borders at " + playerBorderYTop + " and " + playerBorderYBottom + ".", width/2, 40);
   
   // check whether player has crashed into the upper or lower border
   if(p[OBJ_YPOS] < playerBorderYTop || p[OBJ_YPOS] > playerBorderYBottom) {
     // player crashed, reset him and reset current score to 0
-    p[OBJ_XPOS] = 50;
-    p[OBJ_YPOS] = height/2;
-    p[OBJ_XSPEED] = 0;
-    p[OBJ_YSPEED] = 0;
-    score = 0;
+    if(!playerdead) {
+      playerkilled();  
+    }
   }
   
   // Draw player
   fill(187, 64, 64, 100);
+  if(playerdead) {
+    fill(187, 128, 128, 220);	// make player very transparent if currently dead
+  }
   ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
   noStroke();      
   // Draw dot in center of player
@@ -204,13 +238,13 @@ void draw() {
       stroke(255, 255, 255, 255);		// set line color to white.
       // Stroke a line from current enemy to player
       line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);
-      score++; // player gets 1 bonus point per frame if he is close to enemy
+      scoreMultiplier++; // player gets 1 bonus point per frame if he is close to enemy
       
       // check whether we are getting closer
       if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 2) ) {
 	stroke(64, 128, 128, 255);		// set line color to turquoise.
 	line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);  // Stroke a line from current enemy to player
-	score++; // player gets another bonus point per frame if he is *very* close to enemy
+	scoreMultiplier++; // player gets another bonus point per frame if he is *very* close to enemy
 	
 	  // check whether we are too close and the enemy can kill the player
 	  if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam)) ) {
@@ -218,11 +252,9 @@ void draw() {
 	      stroke(187, 0, 0, 255);
 	      line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);	// Stroke a line from current enemy to player
 	      // player killed by enemy, reset him and reset current score to 0
-	      p[OBJ_XPOS] = 50;
-	      p[OBJ_YPOS] = height/2;
-	      p[OBJ_XSPEED] = 0;
-	      p[OBJ_YSPEED] = 0;
-	      score = 0;
+	      if(!playerdead) {
+                playerkilled();  
+	      }
 	  }	  	  
       }
     }
@@ -232,4 +264,32 @@ void draw() {
     // Draw dot in center of this enemy
     rect(e[j][0]-ds, e[j][1]-ds, ds*2, ds*2);
   }
+  
+  // print score in upper right corner
+  fill(255, 255, 255, 255);
+  if(score >= maxScore) {
+    fill(255, 30, 30, 255);	// print red if currently setting new max score
+  }
+  textFont(font, 12); 
+  text("Score: " + score + " Best: " + maxScore + "", width/2, 20);
+    
+  // limit score muliplier to 10x
+  if(scoreMultiplier > maxScoreMultiplier) {
+    scoreMultiplier = maxScoreMultiplier;
+  }
+  
+  fill(255, 255, 255, 255);	// white for font
+  if(! playerdead) {   
+    textFont(font, (40 + scoreMultiplier * 5));
+    fill(255, 200 - scoreMultiplier * 20, 200 - scoreMultiplier * 20, 255);	// make score muliplier more red if it is higher
+    text(scoreMultiplier + "x", width - 70, height - 70);    
+    score += scoreMultiplier;	// player gets 1 point for every frame he survived
+  }
+  else {
+    // different score multiplier shown when dead
+    textFont(font, 40);
+    text("--", width - 60, height - 60);
+  }
+  
+  if(score > maxScore) { maxScore = score; }
 }
