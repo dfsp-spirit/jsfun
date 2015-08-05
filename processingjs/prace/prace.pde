@@ -1,7 +1,11 @@
 /* 
- PROCESSINGJS.COM HEADER ANIMATION  
- MIT License - F1lT3R/Hyper-Metrix
- Native Processing Compatible 
+ PRACE -- a 2D mini action game implemented in processing.js
+ Gameplay:
+   You are the red guy. Don't crash into the ground/ceiling, and don't get hit by the blue guys.
+   You get points for surviving each second, and flying closer to enemies increases score gained per second!
+ written :by Tim 'spirit' Schaefer
+ Idea and initial code based on the Processingjs.com header animation  
+ MIT License  
  */
 
 int OBJ_XPOS = 0;
@@ -137,13 +141,13 @@ void draw() {
   
   // compute player movement
   if(pressingmouse) {
-    p[OBJ_YSPEED] -= 1.0;
+    p[OBJ_YSPEED] -= 0.2;
     if(p[OBJ_YSPEED] < MIN_SPEED) {
         p[OBJ_YSPEED] = MIN_SPEED;
     }
   }
   else {
-      p[OBJ_YSPEED] += 1.0;
+      p[OBJ_YSPEED] += 0.1;
   if(p[OBJ_YSPEED] > MAX_SPEED) {
         p[OBJ_YSPEED] = MAX_SPEED;
     }
