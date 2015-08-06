@@ -26,6 +26,7 @@ float[][] st = new float[backgroundStartrailCount][5];  // star trails, this is 
 // Set maximum and minimum circle size
 int maxSize = 100;
 int minSize = 20;
+int specialSize = 35; // all enemies smaller than this are different color and give even more score when close to them
 // Build float array to store circle properties
 float [] p = new float[5];  // player
 float[][] e = new float[count][5];
@@ -261,14 +262,23 @@ void draw() {
   for (int j=0;j< count;j++) {
     // Disable shape stroke/border
     noStroke();
+    
+    boolean specialEnemy = false;
+    if(e[j][OBJ_RADIUS] < specialSize) {
+      specialEnemy = true;
+    }
+    
     // Cache diameter and radius of current circle
     float radi=e[j][OBJ_RADIUS];
-    float diam=radi/2;
+    float diam=radi/2;	// half the enemy radius (bad nameingnot exactly the diam, hehe)
     if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2)) {
       fill(64, 187, 128, 180); // green if mouseover
     }
     else {
       fill(64, 128, 187, 180); // blue
+      if(specialEnemy) {
+	fill(64, 187, 187, 180); // blue-green
+      }
     }
     // Draw circle
     ellipse(e[j][OBJ_XPOS], e[j][OBJ_YPOS], radi, radi);
@@ -310,20 +320,24 @@ void draw() {
     
     
     // Check distance to player: if we are getting close:
-    if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 6) ) {
+    float pdist = sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]);
+    float sqdiam = sq(diam);
+    if ( (pdist < sqdiam * 6) || (pdist < p[OBJ_RADIUS] * 3))  {
       stroke(255, 255, 255, 255);		// set line color to white.
       // Stroke a line from current enemy to player
       line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);
       scoreMultiplier++; // player gets 1 bonus point per frame if he is close to enemy
+      if(specialEnemy) { scoreMultiplier++; }  // even more bonus for special enemies
       
       // check whether we are getting closer
-      if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam) * 2) ) {
+      if ( pdist < sqdiam * 2)  {
 	stroke(64, 128, 128, 255);		// set line color to turquoise.
 	line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);  // Stroke a line from current enemy to player
 	scoreMultiplier++; // player gets another bonus point per frame if he is *very* close to enemy
+	if(specialEnemy) { scoreMultiplier++; }  // even more bonus for special enemies
 	
 	  // check whether we are too close and the enemy can kill the player
-	  if ( sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]) < (sq(diam)) ) {
+	  if ( pdist < sqdiam)  {
 	      // set color to red (shooting laser)
 	      stroke(187, 0, 0, 255);
 	      line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);	// Stroke a line from current enemy to player
