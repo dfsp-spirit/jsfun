@@ -4,7 +4,7 @@
    You are the red guy. Don't crash into the ground/ceiling, and don't get hit by the blue guys.
    You get points for surviving each second, and flying closer to enemies increases score gained per second!
  written :by Tim 'spirit' Schaefer, http://rcmd.org/spirit/
- Idea and initial code based on the Processingjs.com header animation  
+ The initial code was based on the Processingjs.com header animation
  MIT License  
  */
 
@@ -61,6 +61,10 @@ int waitedFramesSinceDeath;
 boolean playerInvuln = false;	// player is invulnerable for a short time after dying
 int waitFramesInvuln = fps * 3;
 int waitedFramesInvuln = 0;
+
+int maxMultiplierThisLife = 1;
+
+long framesThisLife = 1;	// set 1 instead of 0 to prevent division by zero
 
 void playerkilled() {
   playerdead = true;
@@ -122,7 +126,7 @@ void setup() {
   p[OBJ_YSPEED] = 0;
 }
 
-// Begin main draw loop (called 25 times per second)
+// Begin main draw loop
 void draw() {
   // Fill background black
   scoreMultiplier = 1;
@@ -133,7 +137,15 @@ void draw() {
     textFont(font, 20); 
     text("YOU ARE DEAD -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
 	textFont(font, 12); 
-	text("Current score reset, keeping highscore.", width/3, height/2 + 25);
+	if(score == maxScore) {
+	  text("CONGRATULATIONS, NEW HIGHSCORE!", width/3, height/2 + 25);
+	}
+	else {
+	  text("Missed highscore by " + (maxScore - score) + ", please try again!", width/3, height/2 + 25);
+	}
+	text("Your score was " +  score + ", highscore is " + maxScore + ".", width/3, height/2 + 50);
+	text("Your maximum score multiplier was " +  maxMultiplierThisLife + "x.", width/3, height/2 + 75);
+	//text("Your score per second was " + nfc((framesThisLife / fps / score), 3)  +  ".", width/3, height/2 + 100);
     textFont(font, 12); 
     waitedFramesSinceDeath++;
     if(waitedFramesSinceDeath > waitFramesOnDeath) {	// player alive again
@@ -143,9 +155,11 @@ void draw() {
       p[OBJ_XSPEED] = 0;
       p[OBJ_YSPEED] = 0;
       score = 0;
-	  playerInvuln = true;
+      playerInvuln = true;
       playerdead = false;
-	  waitedFramesInvuln = 0;
+      waitedFramesInvuln = 0;
+      maxMultiplierThisLife = 1;
+      framesThisLife = 1;	// set 1 instead of 0 to prevent division by zero
     }
   }
   
@@ -211,14 +225,14 @@ void draw() {
   }
   
   // Draw player
-  fill(187, 64, 64, 100);	// default player color (when alive)
+  fill(187, 64, 64, 200);	// default player color (when alive)
   if(playerdead) {
     fill(187, 128, 128, 220);	// make player very transparent and less red if currently dead
   }
   if(playerInvuln) {
-    fill(255, 255, 255, 220);	// draw white shield around player if currently invulnerable
+    fill(255, 255, 255, 100 + (millis() % 150));	// draw white shield around player if currently invulnerable (animation: flicker shield)
 	ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS] + 5, p[OBJ_RADIUS] + 5);
-	fill(187, 64, 64, 100);
+	fill(187, 64, 64, 200);  // set default player color
   }
   ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
   noStroke();
@@ -250,15 +264,12 @@ void draw() {
     // Cache diameter and radius of current circle
     float radi=e[j][OBJ_RADIUS];
     float diam=radi/2;
-    if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2))
-      fill(64, 187, 128, 100); // green if mouseover
-    else
-      fill(64, 128, 187, 100); // regular
-    //if ((lockedCircle == j && dragging)) {
-      // // Move the particle's coordinates to the mouse's position, minus its original offset
-      //e[j][0]=mouseX-lockedOffsetX;
-      //e[j][1]=mouseY-lockedOffsetY;
-    //}
+    if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2)) {
+      fill(64, 187, 128, 180); // green if mouseover
+    }
+    else {
+      fill(64, 128, 187, 180); // blue
+    }
     // Draw circle
     ellipse(e[j][OBJ_XPOS], e[j][OBJ_YPOS], radi, radi);
     // Move circle
@@ -332,13 +343,19 @@ void draw() {
     rect(e[j][0]-ds, e[j][1]-ds, ds*2, ds*2);
   }
   
+  // print app name and author
+  fill(150, 150, 150, 255);  // gray
+  textFont(font, 12); 
+  text("PRace by spirit", 15, 15);
+  
+  
   // print score in upper right corner
-  fill(255, 255, 255, 255);
+  fill(255, 255, 255, 255); // white
   if(score >= maxScore) {
     fill(255, 30, 30, 255);	// print red if currently setting new max score
   }
   textFont(font, 12); 
-  text("Score: " + score + " Best: " + maxScore + "", width/2, 20);
+  text("Score: " + score + " Highscore: " + maxScore + "", width/2, 15);
     
   // limit score muliplier to 10x
   if(scoreMultiplier > maxScoreMultiplier) {
@@ -347,9 +364,16 @@ void draw() {
   
   fill(255, 255, 255, 255);	// white for font
   if((! playerdead) && (!playerInvuln)) {	// player only gets score if he is not dead, and not invulnerable   
-    textFont(font, (40 + scoreMultiplier * 5));
+    framesThisLife++;
+    textFont(font, (40 + scoreMultiplier * 8));
     fill(255, 200 - scoreMultiplier * 20, 200 - scoreMultiplier * 20, 255);	// make score multiplier more red if it is higher
-    text(scoreMultiplier + "x", width - 70, height - 70);    
+    text(scoreMultiplier + "x", width - (70 + scoreMultiplier * 5), height - (70 + scoreMultiplier * 5) );    
+    
+    // keep track of the maximum score multiplier reached in a single life (gets reset to 1 on death)
+    if(scoreMultiplier > maxMultiplierThisLife) {
+      maxMultiplierThisLife = scoreMultiplier;
+    }
+    
     score += scoreMultiplier;	// player gets 1 point for every frame he survived
   }
   else {
