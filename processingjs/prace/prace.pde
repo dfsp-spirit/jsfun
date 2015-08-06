@@ -29,6 +29,7 @@ int minSize = 20;
 int specialSize = 35; // all enemies smaller than this are different color and give even more score when close to them
 // Build float array to store circle properties
 float [] p = new float[5];  // player
+float[][] lastPlayerPos = new float[5][2];  // last x/y positions of player, to draw tail
 float[][] e = new float[count][5];
 // Set size of dot in center of players and enemies
 float ds=2;
@@ -89,6 +90,21 @@ void mouseReleased() {
 int playerBorderYTop;
 int playerBorderYBottom;
 
+function FixedSizeStack(int size)
+{
+ this.stac=new Array();
+ this.pop=function(){
+  return this.stac.pop();
+ }
+ this.push=function(item){
+  this.stac.push(item);
+  if(this.stac.length > size) {
+    int howManyTooMuch = size - this.stac.length;
+    this.stac.splice(size, howManyTooMuch);
+  }
+ }
+}
+
 
 // Set up canvas
 void setup() {
@@ -125,6 +141,12 @@ void setup() {
   p[OBJ_RADIUS] = 30;
   p[OBJ_XSPEED] = 0;
   p[OBJ_YSPEED] = 0;
+  
+  // init last positions of player to current position
+  for(int j=0;j< 5;j++) {
+    lastPlayerPos[j][OBJ_XPOS] = p[OBJ_XPOS];
+    lastPlayerPos[j][OBJ_YPOS] = p[OBJ_YPOS];
+  }
 }
 
 // Begin main draw loop
@@ -161,6 +183,11 @@ void draw() {
       waitedFramesInvuln = 0;
       maxMultiplierThisLife = 1;
       framesThisLife = 1;	// set 1 instead of 0 to prevent division by zero
+      
+      for(int j=0;j< 5;j++) {	// init last positions of player to current position
+	lastPlayerPos[j][OBJ_XPOS] = p[OBJ_XPOS];
+	lastPlayerPos[j][OBJ_YPOS] = p[OBJ_YPOS];
+      }
     }
   }
   
