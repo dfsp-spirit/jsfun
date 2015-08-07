@@ -5,7 +5,7 @@
 <title>PRace -- evade enemies and get highscores! -- by spirit</title>
 <script src="../processing.min.js"></script>
 <style>
-p {
+p, li {
 	font-size:10pt;
 	font-family:Arial,sans-serif;
 	line-height:1.5;
@@ -18,8 +18,16 @@ p {
 <p>    
     <b>Controls:</b> Keep the left mouse button pressed to gain thrust, release button to fall.<br/>
     <b>Gameplay:</b> Survive as long as possible, i.e., avoid crashing into enemies or walls.<br/>
-    <b>Hint:</b> Flying close to enemies gives higher scores! Green enemies give twice the score of blue ones.<br/>
-    Written by Tim 'spirit' Schäfer, powered by processing.js.<br/>
+    <b>Hints:</b> 
+	</p>
+	<ul>
+	<li>Flying close to enemies gives higher scores per second (indicated by white line).</li>	
+	<li>The required minimum distance for higher score (negatively) depends on the size of the enemy, i.e., it is easier with larger enemies.</li>
+	<li>Green enemies are very small, and flying close to them gives twice the score of blue ones.</li>
+	<li>Slightly overlapping with enemies given even higher score (cyan line), but beware: you die when your core touches the enemy (red line).</li>	
+	</ul>
+	<p>
+	PRace was written by Tim 'spirit' Schäfer, powered by processing.js.
 </p>
 <canvas data-processing-sources="prace.pde"></canvas>
 <div id="log"></div>

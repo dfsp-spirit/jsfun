@@ -29,8 +29,9 @@ int minSize = 20;
 int specialSize = 35; // all enemies smaller than this are different color and give even more score when close to them
 // Build float array to store circle properties
 float [] p = new float[5];  // player
-float[][] lastPlayerPos = new float[5][2];  // last x/y positions of player, to draw tail
-float[][] e = new float[count][5];
+float[] lastPlayerPosY = new float[1]; // the n last y positions of player, to draw tail
+
+float[][] e = new float[count][5];  // enemies (blue circles)
 // Set size of dot in center of players and enemies
 float ds=2;
 // Set drag switch to false
@@ -90,21 +91,6 @@ void mouseReleased() {
 int playerBorderYTop;
 int playerBorderYBottom;
 
-function FixedSizeStack(int size)
-{
- this.stac=new Array();
- this.pop=function(){
-  return this.stac.pop();
- }
- this.push=function(item){
-  this.stac.push(item);
-  if(this.stac.length > size) {
-    int howManyTooMuch = size - this.stac.length;
-    this.stac.splice(size, howManyTooMuch);
-  }
- }
-}
-
 
 // Set up canvas
 void setup() {
@@ -136,17 +122,13 @@ void setup() {
   }
   
   // place player
-  p[OBJ_XPOS] = 50;
+  p[OBJ_XPOS] = 100;
   p[OBJ_YPOS] = height/2;
   p[OBJ_RADIUS] = 30;
   p[OBJ_XSPEED] = 0;
   p[OBJ_YSPEED] = 0;
   
-  // init last positions of player to current position
-  for(int j=0;j< 5;j++) {
-    lastPlayerPos[j][OBJ_XPOS] = p[OBJ_XPOS];
-    lastPlayerPos[j][OBJ_YPOS] = p[OBJ_YPOS];
-  }
+  lastPlayerPosY[0] = p[OBJ_YPOS];
 }
 
 // Begin main draw loop
@@ -160,12 +142,14 @@ void draw() {
     textFont(font, 20); 
     text("YOU ARE DEAD -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
 	textFont(font, 12); 
+	
 	if(score == maxScore) {
 	  text("CONGRATULATIONS, NEW HIGHSCORE!", width/3, height/2 + 25);
 	}
 	else {
 	  text("Missed highscore by " + (maxScore - score) + ", please try again!", width/3, height/2 + 25);
-	}
+	}	
+	
 	text("Your score was " +  score + ", highscore is " + maxScore + ".", width/3, height/2 + 50);
 	text("Your maximum score multiplier was " +  maxMultiplierThisLife + "x.", width/3, height/2 + 75);
 	//text("Your score per second was " + nfc((framesThisLife / fps / score), 3)  +  ".", width/3, height/2 + 100);
@@ -173,7 +157,7 @@ void draw() {
     waitedFramesSinceDeath++;
     if(waitedFramesSinceDeath > waitFramesOnDeath) {	// player alive again
       waitedFramesSinceDeath = 0;
-      p[OBJ_XPOS] = 50;
+      p[OBJ_XPOS] = 100;
       p[OBJ_YPOS] = height/2;
       p[OBJ_XSPEED] = 0;
       p[OBJ_YSPEED] = 0;
@@ -183,13 +167,21 @@ void draw() {
       waitedFramesInvuln = 0;
       maxMultiplierThisLife = 1;
       framesThisLife = 1;	// set 1 instead of 0 to prevent division by zero
-      
-      for(int j=0;j< 5;j++) {	// init last positions of player to current position
-	lastPlayerPos[j][OBJ_XPOS] = p[OBJ_XPOS];
-	lastPlayerPos[j][OBJ_YPOS] = p[OBJ_YPOS];
-      }
+          
+	  lastPlayerPosY.length = 0;  // empty array of last player positions
     }
   }
+
+  // record last positions of player for drawing tail
+  if( ! playerdead) {
+    if(frameCount % 3 == 0) { // log only every nth frame, otherwise there is too little difference in the positions
+	  lastPlayerPosY = splice(lastPlayerPosY, p[OBJ_YPOS], 0);
+	  if(lastPlayerPosY.length > 5) { 
+	    lastPlayerPosY = lastPlayerPosY.slice(0,5);   // truncate array, keep only n previous positions
+      }
+	}
+  }
+  //text("Recorded last " + lastPlayerPosY.length + " positions.", width - 100, height - 100);
   
   // check whether we need to disable invulnerability again (some time after death)
   if(playerInvuln) {
@@ -223,6 +215,21 @@ void draw() {
     }
   }
   
+  // move and draw startrails in background
+  for (int j=0;j< backgroundStartrailCount;j++) {
+    st[j][OBJ_XPOS] += st[j][OBJ_XSPEED];
+	int colorShift = floor(abs(st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]) * 100.0);   // change color of startrail based on its speed
+	stroke(30 + colorShift,30 + colorShift,60 + colorShift,255);	// dark blue-ish
+	line(st[j][OBJ_XPOS], st[j][OBJ_YPOS], st[j][OBJ_XPOS] + st[j][OBJ_RADIUS], st[j][OBJ_YPOS]);
+	
+	// make them re-enter at the right if they left the screen on the left, but with randomized y position
+	float stdiam = st[j][OBJ_RADIUS] / 2;
+	if ( st[j][OBJ_XPOS] < -stdiam      ) { 
+      st[j][OBJ_XPOS] = width+stdiam;
+	  st[j][OBJ_YPOS] = random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]);
+    } 
+  }
+  noStroke();
   
   // Move player according to current speed
   if(! playerdead) {
@@ -253,7 +260,7 @@ void draw() {
   }
   
   // Draw player
-  fill(187, 64, 64, 200);	// default player color (when alive)
+  fill(187, 64, 64, 255);	// default player color (when alive)
   if(playerdead) {
     fill(187, 128, 128, 220);	// make player very transparent and less red if currently dead
   }
@@ -262,26 +269,26 @@ void draw() {
 	ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS] + 5, p[OBJ_RADIUS] + 5);
 	fill(187, 64, 64, 200);  // set default player color
   }
-  ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);
-  noStroke();
-  // Draw dot in center of player
-  rect(p[OBJ_XPOS]-ds, p[OBJ_YPOS]-ds, ds*2, ds*2);
+  ellipse(p[OBJ_XPOS], p[OBJ_YPOS], p[OBJ_RADIUS], p[OBJ_RADIUS]);	// actually draw the player
   
-  
-  // move and draw startrails in background
-  for (int j=0;j< backgroundStartrailCount;j++) {
-    st[j][OBJ_XPOS] += st[j][OBJ_XSPEED];
-	int colorShift = floor(abs(st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]*st[j][OBJ_XSPEED]) * 100.0);   // change color of startrail based on its speed
-	stroke(30 + colorShift,30 + colorShift,60 + colorShift,255);	// dark blue-ish
-	line(st[j][OBJ_XPOS], st[j][OBJ_YPOS], st[j][OBJ_XPOS] + st[j][OBJ_RADIUS], st[j][OBJ_YPOS]);
-	
-	// make them re-enter at the right if they left the screen on the left, but with randomized y position
-	float stdiam = st[j][OBJ_RADIUS] / 2;
-	if ( st[j][OBJ_XPOS] < -stdiam      ) { 
-      st[j][OBJ_XPOS] = width+stdiam;
-	  st[j][OBJ_YPOS] = random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]);
-    } 
+  // draw tail of player
+  if(! playerdead) {
+    int sumShiftLeft = 0;
+	int thisShadeRadius;
+    for(int j = 0; j < lastPlayerPosY.length; j++) {  // draw the last n positions
+	    fill(187, 64, 64, 150 - ((j+1) * 25));  // make them more and more transparent the older (farther to the left) they are
+		thisShadeRadius = p[OBJ_RADIUS] - ((j+1)*5); // also make them smaller
+		sumShiftLeft += thisShadeRadius;  // keep track of where to place them
+	    ellipse(p[OBJ_XPOS] - sumShiftLeft, lastPlayerPosY[j], thisShadeRadius, thisShadeRadius);	// draw the player's ghost (part of trail)
+	}
   }
+  
+  noStroke();  
+  fill(80, 50, 50, 255);
+  rect(p[OBJ_XPOS]-ds, p[OBJ_YPOS]-ds, ds*2, ds*2);	// draw dot in center of player, the player core
+  
+  
+  
   
   noStroke();
   
@@ -297,7 +304,7 @@ void draw() {
     
     // Cache diameter and radius of current circle
     float radi=e[j][OBJ_RADIUS];
-    float diam=radi/2;	// half the enemy radius (bad nameingnot exactly the diam, hehe)
+    float diam=radi/2;	// half the enemy radius (bad naming, not exactly the diam, hehe)
     if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2)) {
       fill(64, 187, 128, 180); // green if mouseover
     }
@@ -349,6 +356,7 @@ void draw() {
     // Check distance to player: if we are getting close:
     float pdist = sq(e[j][OBJ_XPOS] - p[OBJ_XPOS]) + sq(e[j][OBJ_YPOS] - p[OBJ_YPOS]);
     float sqdiam = sq(diam);
+	if(specialEnemy) { strokeWeight(2); } else { strokeWeight(1); }   // draw lines thicker for special enemies
     if ( (pdist < sqdiam * 6) || (pdist < p[OBJ_RADIUS] * 3))  {
       stroke(255, 255, 255, 255);		// set line color to white.
       // Stroke a line from current enemy to player
