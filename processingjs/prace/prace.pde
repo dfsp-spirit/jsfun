@@ -8,6 +8,7 @@
  MIT License  
  */
 
+ // constants for object properties (index in player/enemies array)
 int OBJ_XPOS = 0;
 int OBJ_YPOS = 1;
 int OBJ_RADIUS = 2;
@@ -17,8 +18,28 @@ int OBJ_YSPEED = 4;
 float MAX_SPEED = 2.0;
 float MIN_SPEED = -2.0;
 
+float caveWallSpeed = 1.0;  // the speed at which the ceiling / floor moves (only relevant if GM_CAVE is on)
+
+// game mode
+int GM_ENEMIES = 0;	// whether enemies will spawn
+int GM_CAVE = 1;	// whether the floor and ceiling has stalagmites / stalactites
+boolean[] gameMode = new boolean[2];
+gameMode[GM_ENEMIES] = true;
+gameMode[GM_CAVE] = true;
+
+int borderTopBottomHeight = 20;	// the height of the floor / ceiling (from bottom/top of screen)
+
 // Set number of circles
-int count = 25;  // enemy count
+int count = 20;  // enemy count
+if( ! gameMode[GM_ENEMIES]) { count = 0; }
+
+int[] ceilingPointsX;
+int[] ceilingPointsY;
+int[] floorPointsX;
+int[] floorPointsY;
+
+
+
 int fps = 60;  // frames per second
 int backgroundStartrailCount = 10;
 float[][] st = new float[backgroundStartrailCount][5];  // star trails, this is decoration only
@@ -56,6 +77,8 @@ int frame = 0;
 // score multiplier
 int scoreMultiplier = 1;
 int maxScoreMultiplier = 10;
+
+
 
 // handling of player death
 boolean playerdead = false;
@@ -98,8 +121,20 @@ void setup() {
   frameRate(fps);
   // Size of canvas (width,height)
   size(800, 600);
-  playerBorderYTop = 20;
-  playerBorderYBottom = height - 20;
+  playerBorderYTop = borderTopBottomHeight;
+  playerBorderYBottom = height - borderTopBottomHeight;
+  
+  // prepare cave stuff
+  ceilingPointsX = new int[]{ 100, 200, 300, 500, 550, 650 };
+  ceilingPointsY = new int[]{ playerBorderYTop, playerBorderYTop + 100, playerBorderYTop, playerBorderYTop, playerBorderYTop + 150, playerBorderYTop  };
+  floorPointsX = new int[]{ 250, 300, 400, 550, 600, 650 };
+  floorPointsY = new int[]{ playerBorderYBottom, playerBorderYBottom - 120, playerBorderYBottom, playerBorderYBottom, playerBorderYBottom - 80, playerBorderYBottom };
+
+  if( ! gameMode[GM_CAVE]) {
+    ceilingPointsX.length = 0;
+    ceilingPointsY.length = 0;
+  }
+
 
   // Stroke/line/border thickness
   strokeWeight(1);
@@ -200,6 +235,33 @@ void draw() {
   rect(0, 0, width, playerBorderYTop);
   rect(0, playerBorderYBottom, width, 20);
   
+  // draw cave if appropriate
+  if(gameMode[GM_CAVE]) {
+    // move cave ceiling
+	for(int j = 0; j < ceilingPointsX.length; j++) {
+      ceilingPointsX[j] -= caveWallSpeed;
+	}
+	
+	// move cave floors
+	for(int j = 0; j < floorPointsX.length; j++) {
+      floorPointsX[j] -= caveWallSpeed;
+	}
+    
+    // draw ceiling stuff as a single polygon
+    beginShape();
+	for(int j = 0; j < ceilingPointsX.length; j++) {
+      vertex(ceilingPointsX[j], ceilingPointsY[j]);
+	}
+    endShape();
+	
+	// draw floor stuff as another single polygon
+    beginShape();
+	for(int j = 0; j < floorPointsX.length; j++) {
+      vertex(floorPointsX[j], floorPointsY[j]);
+	}
+    endShape();
+  }
+  
   
   // compute player movement
   if(pressingmouse) {
@@ -258,6 +320,38 @@ void draw() {
 	  }
     }
   }
+  
+  // in GM_CAVE, check whether player crashed into spikes from ceil/floor
+  if(gameMode[GM_CAVE]) {
+    // check line by line:
+	
+	// find the relevant line (the one at player x pos, if any)
+	boolean ceilingObstacleNearPlayer = false;	// whether an obstacle is at the X position of the player at all
+	fill(255, 0, 0, 255);
+	stroke(255, 0, 0, 255);
+	if(ceilingPointsX.length > 1) {
+	  for(int j = 1; j < ceilingPointsX.length; j++) {
+        lineStartX = ceilingPointsX[j-1];
+		lineStartY = ceilingPointsY[j-1];
+		lineEndX = ceilingPointsX[j];
+		lineEndY = ceilingPointsY[j];
+		stroke(0, 0, 255, 255);
+		line(lineStartX, lineStartY, lineEndX, lineEndY);
+		if(lineStartX <= p[OBJ_XPOS] && lineEndX >= p[OBJ_XPOS]) {  // if the line started left of the player and ends right of him, it is relevant for us
+		  stroke(255, 0, 0, 255);
+		  line(lineStartX, lineStartY, lineEndX, lineEndY);
+		  float lineAscend = (lineEndY - lineStartY)  / (lineEndX - lineStartX);
+		  int relPlayerPos = p[OBJ_XPOS] - lineStartX;	// the X position of the line at which the player is 
+		  int lineLengthX = lineEndX - lineStartX;
+		  int pointAtPlayerX = p[OBJ_XPOS];
+		  int pointAtPlayerY = lineStartY + (lineAscend * lineLengthX);
+		  fill(255, 0, 0, 255);
+		  rect(pointAtPlayerX, pointAtPlayerY, 5, 5);
+		}
+	  }
+	}
+  }
+  noStroke();
   
   // Draw player
   fill(187, 64, 64, 255);	// default player color (when alive)
