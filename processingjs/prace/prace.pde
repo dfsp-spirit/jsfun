@@ -340,13 +340,15 @@ void draw() {
 		if(lineStartX <= p[OBJ_XPOS] && lineEndX >= p[OBJ_XPOS]) {  // if the line started left of the player and ends right of him, it is relevant for us
 		  stroke(255, 0, 0, 255);
 		  line(lineStartX, lineStartY, lineEndX, lineEndY);
-		  float lineAscend = (lineEndY - lineStartY)  / (lineEndX - lineStartX);
+		  float lineAscend = float(lineEndY - lineStartY)  / float(lineEndX - lineStartX);
 		  int relPlayerPos = p[OBJ_XPOS] - lineStartX;	// the X position of the line at which the player is 
 		  int lineLengthX = lineEndX - lineStartX;
 		  int pointAtPlayerX = p[OBJ_XPOS];
-		  int pointAtPlayerY = lineStartY + (lineAscend * lineLengthX);
+		  int pointAtPlayerY = lineStartY + float(lineAscend * float(relPlayerPos));
+		  //text("pointAtPlayerY = " + pointAtPlayerY +" = " + lineStartY + " + (" + lineAscend + "*" + lineLengthX, 200, 150);
+		  //text("lineAscend = " + lineAscend + " (" + float(lineEndY - lineStartY) + ", " + float(lineEndX - lineStartX) + "). lineLengthX=" + lineLengthX + ".", 200, 200);
 		  fill(255, 0, 0, 255);
-		  rect(pointAtPlayerX, pointAtPlayerY, 5, 5);
+		  rect(pointAtPlayerX, pointAtPlayerY, 5, 5);  // draw debug marker for point
 		}
 	  }
 	}
