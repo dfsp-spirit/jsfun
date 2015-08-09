@@ -144,6 +144,7 @@ int playerBorderYTop;
 int playerBorderYBottom;
 
 Point2D[][] ceilingPolygons;
+Point2D[][] floorPolygons;
 
 // Set up canvas
 void setup() {
@@ -155,15 +156,16 @@ void setup() {
   playerBorderYBottom = height - borderTopBottomHeight;
   
   // prepare cave stuff
-  ceilingPointsX = new int[]{ 100, 200, 300, 500, 550, 650 };
-  ceilingPointsY = new int[]{ playerBorderYTop, playerBorderYTop + 100, playerBorderYTop, playerBorderYTop, playerBorderYTop + 150, playerBorderYTop  };
-  ceilingPolygons = new Point2D[][]{ [new Point2D(100, playerBorderYTop), new Point2D(200,playerBorderYTop+100), new Point2D(300,playerBorderYTop)], [new Point2D(500, playerBorderYTop), new Point2D(550,playerBorderYTop+150), new Point2D(650,playerBorderYTop)] };
-  floorPointsX = new int[]{ 250, 300, 400, 550, 600, 650 };
-  floorPointsY = new int[]{ playerBorderYBottom, playerBorderYBottom - 120, playerBorderYBottom, playerBorderYBottom, playerBorderYBottom - 80, playerBorderYBottom };
+  //ceilingPointsX = new int[]{ 100, 200, 300, 500, 550, 650 };
+  //ceilingPointsY = new int[]{ playerBorderYTop, playerBorderYTop + 100, playerBorderYTop, playerBorderYTop, playerBorderYTop + 150, playerBorderYTop  };
+  ceilingPolygons = new Point2D[][]{ [new Point2D(100, playerBorderYTop), new Point2D(200,playerBorderYTop+100), new Point2D(250,playerBorderYTop+75), new Point2D(300,playerBorderYTop)], [new Point2D(500, playerBorderYTop), new Point2D(550,playerBorderYTop+150), new Point2D(650,playerBorderYTop)], [new Point2D(650, playerBorderYTop), new Point2D(700,playerBorderYTop+50), new Point2D(850,playerBorderYTop+75), new Point2D(900,playerBorderYTop)] };
+  floorPolygons = new Point2D[][]{ [new Point2D(100, playerBorderYBottom), new Point2D(200,playerBorderYBottom-100), new Point2D(250,playerBorderYBottom-75), new Point2D(300,playerBorderYBottom)], [new Point2D(500, playerBorderYBottom), new Point2D(550,playerBorderYBottom), new Point2D(650,playerBorderYBottom)], [new Point2D(650, playerBorderYBottom), new Point2D(700,playerBorderYBottom-50), new Point2D(850,playerBorderYBottom-75), new Point2D(900,playerBorderYBottom)] };
+  //floorPointsX = new int[]{ 250, 300, 400, 550, 600, 650 };
+  //floorPointsY = new int[]{ playerBorderYBottom, playerBorderYBottom - 120, playerBorderYBottom, playerBorderYBottom, playerBorderYBottom - 80, playerBorderYBottom };
 
   if( ! gameMode[GM_CAVE]) {
-    ceilingPointsX.length = 0;
-    ceilingPointsY.length = 0;
+    //ceilingPointsX.length = 0;
+    //ceilingPointsY.length = 0;
   }
 
 
@@ -290,6 +292,7 @@ void draw() {
   
   // draw cave if appropriate
   if(gameMode[GM_CAVE]) {
+  
     // move cave ceiling
 	//for(int j = 0; j < ceilingPointsX.length; j++) {
     //  ceilingPointsX[j] -= caveWallSpeed;
@@ -301,6 +304,8 @@ void draw() {
 		vert.x -= caveWallSpeed;
 	  }	  	  
 	}
+	
+	
 	
 	// make ceiling obstacles re-enter if completely out of the screen
 	for(int j = 0; j < ceilingPolygons.length; j++) {
@@ -317,12 +322,34 @@ void draw() {
 	  }
 	}
 	
+	// move cave floor
+	for(int j = 0; j < floorPolygons.length; j++) {
+	  Point2D[] poly = floorPolygons[j];
+	  for(int k = 0; k < poly.length; k++) {
+	    Point2D vert = poly[k];
+		vert.x -= caveWallSpeed;
+	  }	  	  
+	}
 	
+	// make fllor obstacles re-enter if completely out of the screen
+	for(int j = 0; j < floorPolygons.length; j++) {
+	  Point2D[] poly = floorPolygons[j];
+	  int rmx = rightMostPointXOf(poly);
+	  int polyWidth = rmx - leftMostPointXOf(poly);
+	  int polyShift = random(0, 30);
+	  //text("rmx = " + rmx + ".", 100, 100);
+	  if(rmx <= 0) {
+	    for(int k = 0; k < poly.length; k++) {
+	      Point2D vert = poly[k];
+		  vert.x += (width + polyWidth + polyShift);
+	    }
+	  }
+	}
 	
 	// move cave floors
-	for(int j = 0; j < floorPointsX.length; j++) {
-      floorPointsX[j] -= caveWallSpeed;
-	}
+	//for(int j = 0; j < floorPointsX.length; j++) {
+    //  floorPointsX[j] -= caveWallSpeed;
+	//}
     
     // draw ceiling stuff as a single polygon
     //beginShape();
@@ -344,11 +371,22 @@ void draw() {
     
 	
 	// draw floor stuff as another single polygon
-    beginShape();
-	for(int j = 0; j < floorPointsX.length; j++) {
-      vertex(floorPointsX[j], floorPointsY[j]);
+    //beginShape();
+	//for(int j = 0; j < floorPointsX.length; j++) {
+    //  vertex(floorPointsX[j], floorPointsY[j]);
+	//}
+    //endShape();
+	
+	// draw floor as separate polygons
+	for(int j = 0; j < floorPolygons.length; j++) {
+	  Point2D[] poly = floorPolygons[j];
+	  beginShape();
+	  for(int k = 0; k < poly.length; k++) {
+	    Point2D vert = poly[k];
+	    vertex(vert.x, vert.y);
+	  }	        
+	  endShape();
 	}
-    endShape();
   }
   
   
@@ -431,7 +469,7 @@ void draw() {
 	}
 	*/
 	
-	// check collisions with poly
+	// check collisions with ceiling polygons
 	for(int j = 0; j < ceilingPolygons.length; j++) {
 	  Point2D[] poly = ceilingPolygons[j];
 	  if(poly.length >= 3) {
@@ -461,6 +499,49 @@ void draw() {
 			  int pointAtPlayerX = p[OBJ_XPOS];
 			  int pointAtPlayerY = lineStartY + float(lineAscend * float(relPlayerPos));
 			  if(p[OBJ_YPOS] < pointAtPlayerY) {
+			    crashedThisFrame = true;
+			  }
+			  //text("pointAtPlayerY = " + pointAtPlayerY +" = " + lineStartY + " + (" + lineAscend + "*" + lineLengthX, 200, 150);
+			  //text("lineAscend = " + lineAscend + " (" + float(lineEndY - lineStartY) + ", " + float(lineEndX - lineStartX) + "). lineLengthX=" + lineLengthX + ".", 200, 200);
+			  //fill(255, 0, 0, 255);
+			  //rect(pointAtPlayerX, pointAtPlayerY, 5, 5);  // draw debug marker for point
+			}
+			
+		  }	        
+	  }
+	  
+	}
+
+    // check collisions with floor polygons
+	for(int j = 0; j < floorPolygons.length; j++) {
+	  Point2D[] poly = floorPolygons[j];
+	  if(poly.length >= 3) {
+	      //text("Floor polys = " + floorPolygons.length + ", current has " + poly.length + " points.", 200, 200); 
+		  for(int k = 1; k < poly.length; k++) {
+		    if(k == poly.length) {	// close the shape by drawing a line from first point to the last one (left to right)
+			  Point2D startPoint = poly[0];
+			  Point2D endPoint = poly[k-1];
+			}
+			else {
+			  Point2D startPoint = poly[k-1];
+			  Point2D endPoint = poly[k];
+			}
+			lineStartX = startPoint.x;
+		    lineStartY = startPoint.y;
+			lineEndX = endPoint.x;
+			lineEndY = endPoint.y;
+			//stroke(0, 0, 255, 255);
+			//line(lineStartX, lineStartY, lineEndX, lineEndY);
+			//text("Line from (" + lineStartX + "/" + lineStartY + " to (" + lineEndX + "/" + lineEndY +").", 200, 100);
+			if(lineStartX <= p[OBJ_XPOS] && lineEndX >= p[OBJ_XPOS]) {  // if the line started left of the player and ends right of him, it is relevant for us
+			  //stroke(255, 0, 0, 255);
+			  //line(lineStartX, lineStartY, lineEndX, lineEndY);
+			  float lineAscend = float(lineEndY - lineStartY)  / float(lineEndX - lineStartX);
+			  int relPlayerPos = p[OBJ_XPOS] - lineStartX;	// the X position of the line at which the player is 
+			  int lineLengthX = lineEndX - lineStartX;
+			  int pointAtPlayerX = p[OBJ_XPOS];
+			  int pointAtPlayerY = lineStartY + float(lineAscend * float(relPlayerPos));
+			  if(p[OBJ_YPOS] > pointAtPlayerY) {
 			    crashedThisFrame = true;
 			  }
 			  //text("pointAtPlayerY = " + pointAtPlayerY +" = " + lineStartY + " + (" + lineAscend + "*" + lineLengthX, 200, 150);
@@ -559,8 +640,7 @@ void draw() {
     e[j][OBJ_YPOS]+=e[j][OBJ_YSPEED];
 
 
-    /* Wrap edges of canvas so circles leave the top
-     and re-enter the bottom, etc... */
+    // make enemies re-enter at the right after leaving on the left
     if ( e[j][OBJ_XPOS] < -diam      ) { 
       e[j][OBJ_XPOS] = width+diam;
     } 
