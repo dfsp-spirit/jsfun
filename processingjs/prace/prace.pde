@@ -57,13 +57,13 @@ function leftMostPointXOf(Point2D[] poly) {
 }
 
 function rightMostPointXOf(Point2D[] poly) {
-  int pointX = Number.MIN_VALUE;
+  int pointX = - Number.MAX_VALUE;
   for(int i = 0; i < poly.length; i++) {
     if(poly[i].x > pointX) {
 	  pointX = poly[i].x;
 	}
   }
-  if(pointX > Number.MIN_VALUE) {
+  if(pointX > - Number.MAX_VALUE) {
     return pointX;
   }
   return null;
@@ -198,6 +198,9 @@ void setup() {
 }
 
 boolean crashedThisFrame;
+int maxMultiScore = 0;
+int maxMultiScoreMultiplier = 1;  // the multiplier that lead to the highest multi-score
+int multiScore = 0;
 
 // Begin main draw loop
 void draw() {
@@ -209,18 +212,34 @@ void draw() {
   if(playerdead) {
     fill(255, 255, 255, 255);
     textFont(font, 20); 
-    text("YOU ARE DEAD -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
-	textFont(font, 12); 
+    text("CORE DESTROYED -- TRY AGAIN IN " + (floor((waitFramesOnDeath - waitedFramesSinceDeath) / fps)) + "...", width/4, height/2);
+	textFont(font, 12);	
 	
 	if(score == maxScore) {
+	  fill(0, 255, 0, 255);
 	  text("CONGRATULATIONS, NEW HIGHSCORE!", width/3, height/2 + 25);
 	}
 	else {
 	  text("Missed highscore by " + (maxScore - score) + ", please try again!", width/3, height/2 + 25);
-	}	
+	}		
 	
+	fill(255, 255, 255, 255);
 	text("Your score was " +  score + ", highscore is " + maxScore + ".", width/3, height/2 + 50);
 	text("Your maximum score multiplier was " +  maxMultiplierThisLife + "x.", width/3, height/2 + 75);
+	
+	multiScore = score * maxMultiplierThisLife;
+	if(multiScore >= maxMultiScore) {
+	  fill(0, 255, 0, 255);
+	  text("CONGRATULATIONS, NEW MULTI-HIGHSCORE!", width/3, height/2 + 100); 
+	  fill(255, 255, 255, 255);
+	  text("New multi-highscore is " +  multiScore + " (" + score +"x" + maxMultiplierThisLife + ")!", width/3, height/2 + 125);
+	  maxMultiScore = multiScore;
+	  maxMultiScoreMultiplier = maxMultiplierThisLife;
+	}
+	else {
+	  text("Reached a multi-score of " + multiScore + ", missed multi-highscore by " + (maxMultiScore - multiScore) + ".", width/3, height/2 + 100);
+	}
+	
 	//text("Your score per second was " + nfc((framesThisLife / fps / score), 3)  +  ".", width/3, height/2 + 100);
     textFont(font, 12); 
     waitedFramesSinceDeath++;
@@ -530,7 +549,7 @@ void draw() {
     else {
       fill(64, 128, 187, 180); // blue
       if(specialEnemy) {
-	fill(64, 187, 187, 180); // blue-green
+	    fill(64, 187, 187, 180); // blue-green
       }
     }
     // Draw circle
@@ -581,14 +600,14 @@ void draw() {
       // Stroke a line from current enemy to player
       line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);
       scoreMultiplier++; // player gets 1 bonus point per frame if he is close to enemy
-      if(specialEnemy) { scoreMultiplier++; }  // even more bonus for special enemies
+      if(specialEnemy) { scoreMultiplier += 2; }  // even more bonus for special enemies
       
       // check whether we are getting closer
       if ( pdist < sqdiam * 2)  {
 	stroke(64, 128, 128, 255);		// set line color to turquoise.
 	line(e[j][OBJ_XPOS], e[j][OBJ_YPOS], p[OBJ_XPOS], p[OBJ_YPOS]);  // Stroke a line from current enemy to player
 	scoreMultiplier++; // player gets another bonus point per frame if he is *very* close to enemy
-	if(specialEnemy) { scoreMultiplier++; }  // even more bonus for special enemies
+	if(specialEnemy) { scoreMultiplier += 2; }  // even more bonus for special enemies
 	
 	  // check whether we are too close and the enemy can kill the player
 	  if ( pdist < sqdiam)  {
@@ -622,8 +641,14 @@ void draw() {
   if(score >= maxScore) {
     fill(255, 30, 30, 255);	// print red if currently setting new max score
   }
-  textFont(font, 12); 
-  text("Score: " + score + " Highscore: " + maxScore + "", width/2, 15);
+  text("Score: " + score + " Highscore: " + maxScore + "", width/4, 15);
+  
+  // print multiScore
+  fill(255, 255, 255, 255); // white
+  if(score * maxMultiplierThisLife >= maxMultiScore) {
+    fill(255, 30, 30, 255);	// print red if currently setting new max score
+  }
+  text("Multi-Score: " + (score * maxMultiplierThisLife) + " @" + maxMultiplierThisLife + "x, Best: " + maxMultiScore + " @" + maxMultiScoreMultiplier + "x", width/2, 15);
     
   // limit score muliplier to 10x
   if(scoreMultiplier > maxScoreMultiplier) {
