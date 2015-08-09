@@ -27,14 +27,14 @@ int GM_BOUNCE = 2;	// whether enemies also have y-axis speed, and bounce off the
 int GM_BALLOON = 3;	// whether enemies enter from the bottom and float upwards (set GM_CAVE to off)
 boolean[] gameMode = new boolean[2];
 gameMode[GM_ENEMIES] = true;
-gameMode[GM_CAVE] = true;
-gameMode[GM_BOUNCE] = true;
-gameMode[GM_BALLOON] = false;
+gameMode[GM_CAVE] = false;
+gameMode[GM_BOUNCE] = false;
+gameMode[GM_BALLOON] = true;
 
 int borderTopBottomHeight = 20;	// the height of the floor / ceiling (from bottom/top of screen)
 
 // Set number of circles
-int count = 20;  // enemy count
+int count = 15;  // enemy count
 if( ! gameMode[GM_ENEMIES]) { count = 0; }
 
 int[] ceilingPointsX;
@@ -673,7 +673,7 @@ void draw() {
 	}
 	else {
 	    // make them re-enter at bottom when crossing top, and vice versa
-		if ( e[j][OBJ_YPOS] < 0-diam + addBorderTopBottom ) { 
+		if ( e[j][OBJ_YPOS] < 0-diam ) { 
 		  e[j][OBJ_YPOS] = height+diam;
 		}
 		if ( e[j][OBJ_YPOS] > height+diam) { 
