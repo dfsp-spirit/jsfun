@@ -38,7 +38,36 @@ int[] ceilingPointsY;
 int[] floorPointsX;
 int[] floorPointsY;
 
+function Point2D(int x, int y) {
+  this.x = x;
+  this.y = y;
+}
 
+function leftMostPointXOf(Point2D[] poly) {
+  int pointX = Number.MIN_VALUE;
+  for(int i = 0; i < poly.length; i++) {
+    if(poly[i].x > pointX) {
+	  pointX = poly[i].x;
+	}
+  }
+  if(pointX > Number.MIN_VALUE) {
+    return pointX;
+  }
+  return null;
+}
+
+function rightMostPointXOf(Point2D[] poly) {
+  int pointX = Number.MAX_VALUE;
+  for(int i = 0; i < poly.length; i++) {
+    if(poly[i].x < pointX) {
+	  pointX = poly[i].x;
+	}
+  }
+  if(pointX < Number.MAX_VALUE) {
+    return pointX;
+  }
+  return null;
+}
 
 int fps = 60;  // frames per second
 int backgroundStartrailCount = 10;
@@ -114,6 +143,7 @@ void mouseReleased() {
 int playerBorderYTop;
 int playerBorderYBottom;
 
+Point2D[][] ceilingPolygons;
 
 // Set up canvas
 void setup() {
@@ -127,6 +157,7 @@ void setup() {
   // prepare cave stuff
   ceilingPointsX = new int[]{ 100, 200, 300, 500, 550, 650 };
   ceilingPointsY = new int[]{ playerBorderYTop, playerBorderYTop + 100, playerBorderYTop, playerBorderYTop, playerBorderYTop + 150, playerBorderYTop  };
+  ceilingPolygons = new Point2D[][]{ [new Point2D(100, playerBorderYTop), new Point2D(200,playerBorderYTop+100), new Point2D(300,playerBorderYTop)], [new Point2D(500, playerBorderYTop), new Point2D(550,playerBorderYTop+150), new Point2D(650,playerBorderYTop)] };
   floorPointsX = new int[]{ 250, 300, 400, 550, 600, 650 };
   floorPointsY = new int[]{ playerBorderYBottom, playerBorderYBottom - 120, playerBorderYBottom, playerBorderYBottom, playerBorderYBottom - 80, playerBorderYBottom };
 
@@ -238,8 +269,15 @@ void draw() {
   // draw cave if appropriate
   if(gameMode[GM_CAVE]) {
     // move cave ceiling
-	for(int j = 0; j < ceilingPointsX.length; j++) {
-      ceilingPointsX[j] -= caveWallSpeed;
+	//for(int j = 0; j < ceilingPointsX.length; j++) {
+    //  ceilingPointsX[j] -= caveWallSpeed;
+	//}
+	for(int j = 0; j < ceilingPolygons.length; j++) {
+	  Point2D[] poly = ceilingPolygons[j];
+	  for(int k = 0; k < poly.length; k++) {
+	    Point2D vert = poly[k];
+		vert.x -= caveWallSpeed;
+	  }	        
 	}
 	
 	// move cave floors
@@ -248,11 +286,23 @@ void draw() {
 	}
     
     // draw ceiling stuff as a single polygon
-    beginShape();
-	for(int j = 0; j < ceilingPointsX.length; j++) {
-      vertex(ceilingPointsX[j], ceilingPointsY[j]);
+    //beginShape();
+	//for(int j = 0; j < ceilingPointsX.length; j++) {
+    //  vertex(ceilingPointsX[j], ceilingPointsY[j]);
+	//}
+    //endShape();
+	
+	// draw ceiling as separate polygons
+	for(int j = 0; j < ceilingPolygons.length; j++) {
+	  Point2D[] poly = ceilingPolygons[j];
+	  beginShape();
+	  for(int k = 0; k < poly.length; k++) {
+	    Point2D vert = poly[k];
+	    vertex(vert.x, vert.y);
+	  }	        
+	  endShape();
 	}
-    endShape();
+    
 	
 	// draw floor stuff as another single polygon
     beginShape();
@@ -326,9 +376,10 @@ void draw() {
     // check line by line:
 	
 	// find the relevant line (the one at player x pos, if any)
-	boolean ceilingObstacleNearPlayer = false;	// whether an obstacle is at the X position of the player at all
 	fill(255, 0, 0, 255);
 	stroke(255, 0, 0, 255);
+	
+	/*
 	if(ceilingPointsX.length > 1) {
 	  for(int j = 1; j < ceilingPointsX.length; j++) {
         lineStartX = ceilingPointsX[j-1];
@@ -352,8 +403,51 @@ void draw() {
 		}
 	  }
 	}
+	*/
+	
+	for(int j = 0; j < ceilingPolygons.length; j++) {
+	  Point2D[] poly = ceilingPolygons[j];
+	  if(poly.length >= 3) {
+	      text("Ceiling polys = " + ceilingPolygons.length + ", current has " + poly.length + " points.", 200, 200); 
+		  for(int k = 1; k < poly.length; k++) {
+		    if(k == poly.length) {	// close the shape by drawing a line from first point to the last one (left to right)
+			  Point2D startPoint = poly[0];
+			  Point2D endPoint = poly[k-1];
+			}
+			else {
+			  Point2D startPoint = poly[k-1];
+			  Point2D endPoint = poly[k];
+			}
+			lineStartX = startPoint.x;
+		    lineStartY = startPoint.y;
+			lineEndX = endPoint.x;
+			lineEndY = endPoint.y;
+			stroke(0, 0, 255, 255);
+			line(lineStartX, lineStartY, lineEndX, lineEndY);
+			//text("Line from (" + lineStartX + "/" + lineStartY + " to (" + lineEndX + "/" + lineEndY +").", 200, 100);
+			if(lineStartX <= p[OBJ_XPOS] && lineEndX >= p[OBJ_XPOS]) {  // if the line started left of the player and ends right of him, it is relevant for us
+			  stroke(255, 0, 0, 255);
+			  line(lineStartX, lineStartY, lineEndX, lineEndY);
+			  float lineAscend = float(lineEndY - lineStartY)  / float(lineEndX - lineStartX);
+			  int relPlayerPos = p[OBJ_XPOS] - lineStartX;	// the X position of the line at which the player is 
+			  int lineLengthX = lineEndX - lineStartX;
+			  int pointAtPlayerX = p[OBJ_XPOS];
+			  int pointAtPlayerY = lineStartY + float(lineAscend * float(relPlayerPos));
+			  //text("pointAtPlayerY = " + pointAtPlayerY +" = " + lineStartY + " + (" + lineAscend + "*" + lineLengthX, 200, 150);
+			  //text("lineAscend = " + lineAscend + " (" + float(lineEndY - lineStartY) + ", " + float(lineEndX - lineStartX) + "). lineLengthX=" + lineLengthX + ".", 200, 200);
+			  fill(255, 0, 0, 255);
+			  rect(pointAtPlayerX, pointAtPlayerY, 5, 5);  // draw debug marker for point
+			}
+			
+		  }	        
+	  }
+	  
+	}	
+	
   }
   noStroke();
+  
+  
   
   // Draw player
   fill(187, 64, 64, 255);	// default player color (when alive)
