@@ -23,9 +23,13 @@ float caveWallSpeed = 1.0;  // the speed at which the ceiling / floor moves (onl
 // game mode
 int GM_ENEMIES = 0;	// whether enemies will spawn
 int GM_CAVE = 1;	// whether the floor and ceiling has stalagmites / stalactites
+int GM_BOUNCE = 2;	// whether enemies also have y-axis speed, and bounce off the ceiling/floor
+int GM_BALLOON = 3;	// whether enemies enter from the bottom and float upwards (set GM_CAVE to off)
 boolean[] gameMode = new boolean[2];
 gameMode[GM_ENEMIES] = true;
 gameMode[GM_CAVE] = true;
+gameMode[GM_BOUNCE] = true;
+gameMode[GM_BALLOON] = false;
 
 int borderTopBottomHeight = 20;	// the height of the floor / ceiling (from bottom/top of screen)
 
@@ -172,12 +176,20 @@ void setup() {
   // Stroke/line/border thickness
   strokeWeight(1);
   // Initiate array with more or less random values for enemies
-  for (int j=0;j< count;j++) {
-    e[j][OBJ_XPOS]=random(width/3, width); // X 
-    e[j][OBJ_RADIUS]=random(minSize, maxSize); // Radius        
-    e[j][OBJ_YPOS]=random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]); // Y    
-    e[j][OBJ_XSPEED]=random(-2.0, -1.0); // X Speed
-    e[j][OBJ_YSPEED]=0.; // Y Speed
+  for (int j=0; j < count; j++) {
+    e[j][OBJ_XPOS] = random(width/3, width); // X 
+    e[j][OBJ_RADIUS] = random(minSize, maxSize); // Radius        
+    e[j][OBJ_YPOS] = random(playerBorderYTop + e[j][OBJ_RADIUS], playerBorderYBottom - e[j][OBJ_RADIUS]); // Y    
+    e[j][OBJ_XSPEED] = random(-2.0, -1.0); // X Speed
+	e[j][OBJ_YSPEED] = 0.; // Y Speed
+	
+	if(gameMode[GM_BALLOON]) {
+	  e[j][OBJ_YSPEED] = random(-2.0, -1.0); // Y Speed
+	}
+	if(gameMode[GM_BOUNCE]) {
+	  e[j][OBJ_YSPEED] = random(-2.0, 2.0); // Y Speed
+	}
+	
   }
   
   // generate star trails in background
@@ -331,7 +343,7 @@ void draw() {
 	  }	  	  
 	}
 	
-	// make fllor obstacles re-enter if completely out of the screen
+	// make floor obstacles re-enter if completely out of the screen
 	for(int j = 0; j < floorPolygons.length; j++) {
 	  Point2D[] poly = floorPolygons[j];
 	  int rmx = rightMostPointXOf(poly);
@@ -621,38 +633,53 @@ void draw() {
       specialEnemy = true;
     }
     
-    // Cache diameter and radius of current circle
+    // Cache diameter and radius of current enemy
     float radi=e[j][OBJ_RADIUS];
     float diam=radi/2;	// half the enemy radius (bad naming, not exactly the diam, hehe)
-    if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2)) {
-      fill(64, 187, 128, 180); // green if mouseover
-    }
-    else {
+    //if (sq(e[j][0] - mouseX) + sq(e[j][1] - mouseY) < sq(e[j][2]/2)) {
+    //  fill(64, 187, 128, 180); // green if mouseover
+    //}
+    //else {
       fill(64, 128, 187, 180); // blue
       if(specialEnemy) {
 	    fill(64, 187, 187, 180); // blue-green
       }
-    }
-    // Draw circle
+    //}
+    // Draw enemy
     ellipse(e[j][OBJ_XPOS], e[j][OBJ_YPOS], radi, radi);
-    // Move circle
+    // Move enemy
     e[j][OBJ_XPOS]+=e[j][OBJ_XSPEED];
     e[j][OBJ_YPOS]+=e[j][OBJ_YSPEED];
 
 
-    // make enemies re-enter at the right after leaving on the left
+    // make enemies re-enter at the right after leaving on the left	and vice versa
     if ( e[j][OBJ_XPOS] < -diam      ) { 
       e[j][OBJ_XPOS] = width+diam;
     } 
     if ( e[j][OBJ_XPOS] > width+diam ) { 
       e[j][OBJ_XPOS] = -diam;
     }
-    if ( e[j][OBJ_YPOS] < 0-diam     ) { 
-      e[j][OBJ_YPOS] = height+diam;
-    }
-    if ( e[j][OBJ_YPOS] > height+diam) { 
-      e[j][OBJ_YPOS] = -diam;
-    }
+	
+	// do the same for bottom/top, unless in BOUNCE MODE	
+	if(gameMode[GM_BOUNCE]) {
+	  // in BOUNCE mode, we need to invert their Y speed, and we have to do this at the bottom/top player borders (for consistency with player movement)
+
+	  if ( e[j][OBJ_YPOS] < playerBorderYTop + diam) { 
+	    e[j][OBJ_YSPEED] =  -e[j][OBJ_YSPEED];
+	  }
+	  if ( e[j][OBJ_YPOS] > playerBorderYBottom - diam) { 
+	    e[j][OBJ_YSPEED] =  -e[j][OBJ_YSPEED];
+	  }
+	}
+	else {
+	    // make them re-enter at bottom when crossing top, and vice versa
+		if ( e[j][OBJ_YPOS] < 0-diam + addBorderTopBottom ) { 
+		  e[j][OBJ_YPOS] = height+diam;
+		}
+		if ( e[j][OBJ_YPOS] > height+diam) { 
+		  e[j][OBJ_YPOS] = -diam;
+		}
+	}
 
     // otherwise set center dot color to black.. 
     fill(0, 0, 0, 255);
