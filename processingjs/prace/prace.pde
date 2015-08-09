@@ -44,19 +44,6 @@ function Point2D(int x, int y) {
 }
 
 function leftMostPointXOf(Point2D[] poly) {
-  int pointX = Number.MIN_VALUE;
-  for(int i = 0; i < poly.length; i++) {
-    if(poly[i].x > pointX) {
-	  pointX = poly[i].x;
-	}
-  }
-  if(pointX > Number.MIN_VALUE) {
-    return pointX;
-  }
-  return null;
-}
-
-function rightMostPointXOf(Point2D[] poly) {
   int pointX = Number.MAX_VALUE;
   for(int i = 0; i < poly.length; i++) {
     if(poly[i].x < pointX) {
@@ -64,6 +51,19 @@ function rightMostPointXOf(Point2D[] poly) {
 	}
   }
   if(pointX < Number.MAX_VALUE) {
+    return pointX;
+  }
+  return null;
+}
+
+function rightMostPointXOf(Point2D[] poly) {
+  int pointX = Number.MIN_VALUE;
+  for(int i = 0; i < poly.length; i++) {
+    if(poly[i].x > pointX) {
+	  pointX = poly[i].x;
+	}
+  }
+  if(pointX > Number.MIN_VALUE) {
     return pointX;
   }
   return null;
@@ -197,11 +197,14 @@ void setup() {
   lastPlayerPosY[0] = p[OBJ_YPOS];
 }
 
+boolean crashedThisFrame;
+
 // Begin main draw loop
 void draw() {
   // Fill background black
   scoreMultiplier = 1;
   background(0);
+  crashedThisFrame = false;
   
   if(playerdead) {
     fill(255, 255, 255, 255);
@@ -277,8 +280,25 @@ void draw() {
 	  for(int k = 0; k < poly.length; k++) {
 	    Point2D vert = poly[k];
 		vert.x -= caveWallSpeed;
-	  }	        
+	  }	  	  
 	}
+	
+	// make ceiling obstacles re-enter if completely out of the screen
+	for(int j = 0; j < ceilingPolygons.length; j++) {
+	  Point2D[] poly = ceilingPolygons[j];
+	  int rmx = rightMostPointXOf(poly);
+	  int polyWidth = rmx - leftMostPointXOf(poly);
+	  int polyShift = random(0, 30);
+	  //text("rmx = " + rmx + ".", 100, 100);
+	  if(rmx <= 0) {
+	    for(int k = 0; k < poly.length; k++) {
+	      Point2D vert = poly[k];
+		  vert.x += (width + polyWidth + polyShift);
+	    }
+	  }
+	}
+	
+	
 	
 	// move cave floors
 	for(int j = 0; j < floorPointsX.length; j++) {
@@ -354,22 +374,9 @@ void draw() {
   
   // check whether player has crashed into the upper or lower border
   if(p[OBJ_YPOS] < playerBorderYTop || p[OBJ_YPOS] > playerBorderYBottom) {
-    // player crashed, reset him and reset current score to 0
-    if(!playerdead) {
-	  if(playerInvuln) {
-	    // player is invulnerable. do not kill him, but do not let him move further.
-		if(p[OBJ_YPOS] < playerBorderYTop) {
-		  p[OBJ_YPOS] = playerBorderYTop;
-		}
-		if(p[OBJ_YPOS] > playerBorderYBottom) {
-		  p[OBJ_YPOS] = playerBorderYBottom;
-		}
-	  }
-	  else {
-        playerkilled();  
-	  }
-    }
+    crashedThisFrame = true;
   }
+  
   
   // in GM_CAVE, check whether player crashed into spikes from ceil/floor
   if(gameMode[GM_CAVE]) {
@@ -405,10 +412,11 @@ void draw() {
 	}
 	*/
 	
+	// check collisions with poly
 	for(int j = 0; j < ceilingPolygons.length; j++) {
 	  Point2D[] poly = ceilingPolygons[j];
 	  if(poly.length >= 3) {
-	      text("Ceiling polys = " + ceilingPolygons.length + ", current has " + poly.length + " points.", 200, 200); 
+	      //text("Ceiling polys = " + ceilingPolygons.length + ", current has " + poly.length + " points.", 200, 200); 
 		  for(int k = 1; k < poly.length; k++) {
 		    if(k == poly.length) {	// close the shape by drawing a line from first point to the last one (left to right)
 			  Point2D startPoint = poly[0];
@@ -422,21 +430,24 @@ void draw() {
 		    lineStartY = startPoint.y;
 			lineEndX = endPoint.x;
 			lineEndY = endPoint.y;
-			stroke(0, 0, 255, 255);
-			line(lineStartX, lineStartY, lineEndX, lineEndY);
+			//stroke(0, 0, 255, 255);
+			//line(lineStartX, lineStartY, lineEndX, lineEndY);
 			//text("Line from (" + lineStartX + "/" + lineStartY + " to (" + lineEndX + "/" + lineEndY +").", 200, 100);
 			if(lineStartX <= p[OBJ_XPOS] && lineEndX >= p[OBJ_XPOS]) {  // if the line started left of the player and ends right of him, it is relevant for us
-			  stroke(255, 0, 0, 255);
-			  line(lineStartX, lineStartY, lineEndX, lineEndY);
+			  //stroke(255, 0, 0, 255);
+			  //line(lineStartX, lineStartY, lineEndX, lineEndY);
 			  float lineAscend = float(lineEndY - lineStartY)  / float(lineEndX - lineStartX);
 			  int relPlayerPos = p[OBJ_XPOS] - lineStartX;	// the X position of the line at which the player is 
 			  int lineLengthX = lineEndX - lineStartX;
 			  int pointAtPlayerX = p[OBJ_XPOS];
 			  int pointAtPlayerY = lineStartY + float(lineAscend * float(relPlayerPos));
+			  if(p[OBJ_YPOS] < pointAtPlayerY) {
+			    crashedThisFrame = true;
+			  }
 			  //text("pointAtPlayerY = " + pointAtPlayerY +" = " + lineStartY + " + (" + lineAscend + "*" + lineLengthX, 200, 150);
 			  //text("lineAscend = " + lineAscend + " (" + float(lineEndY - lineStartY) + ", " + float(lineEndX - lineStartX) + "). lineLengthX=" + lineLengthX + ".", 200, 200);
-			  fill(255, 0, 0, 255);
-			  rect(pointAtPlayerX, pointAtPlayerY, 5, 5);  // draw debug marker for point
+			  //fill(255, 0, 0, 255);
+			  //rect(pointAtPlayerX, pointAtPlayerY, 5, 5);  // draw debug marker for point
 			}
 			
 		  }	        
@@ -446,6 +457,24 @@ void draw() {
 	
   }
   noStroke();
+  
+  if(crashedThisFrame) {
+    // player crashed, reset him and reset current score to 0
+    if(!playerdead) {
+	  if(playerInvuln) {
+	    // player is invulnerable. do not kill him, but do not let him move further.
+		if(p[OBJ_YPOS] < playerBorderYTop) {
+		  p[OBJ_YPOS] = playerBorderYTop;
+		}
+		if(p[OBJ_YPOS] > playerBorderYBottom) {
+		  p[OBJ_YPOS] = playerBorderYBottom;
+		}
+	  }
+	  else {
+        playerkilled();  
+	  }
+    }
+  }
   
   
   
