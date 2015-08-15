@@ -34,6 +34,16 @@ int maxScore = 0;
 int frame = 0;
 float deltaT;
 
+function Point2D(int x, int y) {
+  this.x = x;
+  this.y = y;
+}
+
+void doLog(string msg) {
+    var el = document.getElementById('log');
+  var elContent = el.innerHTML;
+  el.innerHTML = elContent + msg + "<br />\n";
+}
 
 float[] player = new float[6];
 float[][] streams = new float[numStreams][6];
@@ -87,7 +97,7 @@ void setup() {
   // Frame rate
   frameRate(fps);
   // Size of canvas (width,height)
-  size(400, 600);
+  size(400, 500);
   playerBorderYBottom = height -20;
   
   // place player
@@ -104,7 +114,14 @@ function playerKilled() {
   waitedFramesSinceDeath = 0;
 }
 
-function rectsOverlap(float[] o1, float[] o2) {
+// checks whether the 2 rectangular objects overlap (collison detection)
+function rectsOverlap(float[] rect1, float[] rect2) {
+    if (rect1[OBJ_XPOS] < rect2[OBJ_XPOS] + rect2[OBJ_WIDTH] &&
+        rect1[OBJ_XPOS] + rect1[OBJ_WIDTH] > rect2[OBJ_XPOS] &&
+        rect1[OBJ_YPOS] < rect2[OBJ_YPOS] + rect2[OBJ_HEIGHT] &&
+        rect1[OBJ_HEIGHT] + rect1[OBJ_YPOS] > rect2[OBJ_YPOS]) {
+          return true;
+    }
     return false;
 }
 
@@ -244,6 +261,7 @@ void draw() {
   textFont(font, 12); 
   text("GoldenShowerDeluxe", 15, 15);
   
+  score++;
   
   // print score in upper right corner
   fill(255, 255, 255, 255); // white
