@@ -19,7 +19,8 @@ float MIN_SPEED = -6.0;
 
 
 int fps = 25;  // frames per second
-int numStreams = 10;
+int numStreams = 15;
+int numBeers = 2;
 
 // load a font for usage later
 PFont font;
@@ -47,6 +48,7 @@ void doLog(string msg) {
 
 float[] player = new float[6];
 float[][] streams = new float[numStreams][6];
+float[][] beers = new float[numBeers][6];
 
 // handling of player death
 boolean playerdead = false;
@@ -83,12 +85,24 @@ function resetPlayer() {
 
 function generateEnemies() {
     for(int j=0; j < numStreams; j++) {
-        streams[j][OBJ_XPOS] = random(20,width-20);
-        streams[j][OBJ_YPOS] = random(0,height/2);
+        streams[j][OBJ_XPOS] = random(0,width-10);
+        streams[j][OBJ_YPOS] = random(0,height) - height/2;
         streams[j][OBJ_WIDTH] = 10;
         streams[j][OBJ_HEIGHT] = random(50,80);
         streams[j][OBJ_XSPEED] = 0;
         streams[j][OBJ_YSPEED] = random(5.5,8.0);
+    }
+}
+
+function generateBeer() {
+    for(int j=0; j < numBeers; j++) {
+        beers[j][OBJ_WIDTH] = 20;
+        beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]/2);
+        beers[j][OBJ_YPOS] = random(0,height) - height/2;
+        beers[j][OBJ_WIDTH] = 20;
+        beers[j][OBJ_HEIGHT] = 40;
+        beers[j][OBJ_XSPEED] = 0;
+        beers[j][OBJ_YSPEED] = random(3.5,7.0);
     }
 }
 
@@ -105,12 +119,15 @@ void setup() {
   
   // generate enemies
   generateEnemies();
+  
+  // generate beer
+  generateBeer();
 }
 
-boolean crashedThisFrame;
+boolean crashedThisFrame = false;
 
 function playerKilled() {
-    playerdead = true;
+  playerdead = true;
   waitedFramesSinceDeath = 0;
 }
 
@@ -175,9 +192,9 @@ void draw() {
 	}
   }
   
-  // lower borders / ground
-  fill(80, 80, 80, 255);
-  rect(0, playerBorderYBottom, width, 20);
+  // draw lower borders / ground
+  //fill(80, 80, 80, 255);
+  //rect(0, playerBorderYBottom, width, 20);
   
   // compute player movement
   if(keyPressed) {
@@ -242,18 +259,46 @@ void draw() {
     rect(streams[j][OBJ_XPOS], streams[j][OBJ_YPOS], streams[j][OBJ_WIDTH], streams[j][OBJ_HEIGHT]);
     
     
-	  if ( rectsOverlap(player, streams[j]))  {
-	      if(!playerdead) {
-		        if(!playerInvuln) {
-                  playerKilled();
-                }				
-	      }
-	  }	  	  
-   
-    
+    if ( rectsOverlap(player, streams[j]))  {
+        if(!playerdead) {
+                if(!playerInvuln) {
+            playerKilled();
+        }				
+        }
+    }	  	  
     // Turn off stroke/border
     noStroke();      
-   
+  }
+  
+  // Begin looping through beer array
+  for (int j=0;j< beers.length;j++) {
+    // Disable shape stroke/border
+    noStroke();
+  
+    // move beer
+    beers[j][OBJ_YPOS] += beers[j][OBJ_YSPEED];
+    // make beer re-enter at the top after leaving at the bottom
+    if ( beers[j][OBJ_YPOS] > height+beers[j][OBJ_HEIGHT]) { 
+        beers[j][OBJ_YPOS] = -(beers[j][OBJ_HEIGHT] + random(0,40));
+        beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]);
+    }
+	
+
+    // draw beer
+    fill(100, 255, 100, 255);  // green    
+    noStroke();
+    rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS], beers[j][OBJ_WIDTH], beers[j][OBJ_HEIGHT]);
+    fill(100, 200, 100, 255);  // green
+    rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS]+5, beers[j][OBJ_WIDTH], 20);
+    
+    
+    if ( rectsOverlap(player, beers[j]))  {
+        score += 500;
+        beers[j][OBJ_YPOS] = -(beers[j][OBJ_HEIGHT] + random(20,50));
+        beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]);
+    }	  	  
+    // Turn off stroke/border
+    noStroke();      
   }
   
   // print app name and author
