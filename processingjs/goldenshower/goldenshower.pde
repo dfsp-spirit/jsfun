@@ -75,7 +75,7 @@ void mouseReleased() {
 
 
 function resetPlayer() {
-  player[OBJ_WIDTH] = 40;
+  player[OBJ_WIDTH] = 30;
   player[OBJ_HEIGHT] = 20;
   player[OBJ_XSPEED] = 0;
   player[OBJ_YSPEED] = 0;
@@ -100,7 +100,7 @@ function generateBeer() {
         beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]/2);
         beers[j][OBJ_YPOS] = random(0,height) - height/2;
         beers[j][OBJ_WIDTH] = 20;
-        beers[j][OBJ_HEIGHT] = 40;
+        beers[j][OBJ_HEIGHT] = 35;
         beers[j][OBJ_XSPEED] = 0;
         beers[j][OBJ_YSPEED] = random(3.5,7.0);
     }
@@ -288,8 +288,11 @@ void draw() {
     fill(100, 255, 100, 255);  // green    
     noStroke();
     rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS], beers[j][OBJ_WIDTH], beers[j][OBJ_HEIGHT]);
-    fill(100, 200, 100, 255);  // green
+    fill(50, 200, 50, 255);  // green for label sticker
     rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS]+5, beers[j][OBJ_WIDTH], 20);
+    fill(220, 220, 220, 255);  // gray for top/bottom of tin
+    rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS], beers[j][OBJ_WIDTH], 2); // top
+    rect(beers[j][OBJ_XPOS], beers[j][OBJ_YPOS]+beers[j][OBJ_HEIGHT]-2, beers[j][OBJ_WIDTH], 2); // bottom
     
     
     if ( rectsOverlap(player, beers[j]))  {
@@ -305,6 +308,7 @@ void draw() {
   fill(150, 150, 150, 255);  // gray
   textFont(font, 12); 
   text("GoldenShowerDeluxe", 15, 15);
+  text("Use the 'a' and 'd' keys to evade piss and catch beers.", 15, 30);
   
   score++;
   
