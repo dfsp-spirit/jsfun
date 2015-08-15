@@ -25,11 +25,11 @@ int GM_ENEMIES = 0;	// whether enemies will spawn
 int GM_CAVE = 1;	// whether the floor and ceiling has stalagmites / stalactites
 int GM_BOUNCE = 2;	// whether enemies also have y-axis speed, and bounce off the ceiling/floor
 int GM_BALLOON = 3;	// whether enemies enter from the bottom and float upwards (set GM_CAVE to off)
-boolean[] gameMode = new boolean[2];
+boolean[] gameMode = new boolean[3];
 gameMode[GM_ENEMIES] = true;
-gameMode[GM_CAVE] = false;
+gameMode[GM_CAVE] = true;
 gameMode[GM_BOUNCE] = false;
-gameMode[GM_BALLOON] = true;
+gameMode[GM_BALLOON] = false;
 
 int borderTopBottomHeight = 20;	// the height of the floor / ceiling (from bottom/top of screen)
 
@@ -609,7 +609,7 @@ void draw() {
     for(int j = 0; j < lastPlayerPosY.length; j++) {  // draw the last n positions
 	    fill(187, 64, 64, 150 - ((j+1) * 25));  // make them more and more transparent the older (farther to the left) they are
 		thisShadeRadius = p[OBJ_RADIUS] - ((j+1)*5); // also make them smaller
-		sumShiftLeft += thisShadeRadius;  // keep track of where to place them
+		sumShiftLeft += thisShadeRadius + 2;  // keep track of where to place them
 	    ellipse(p[OBJ_XPOS] - sumShiftLeft, lastPlayerPosY[j], thisShadeRadius, thisShadeRadius);	// draw the player's ghost (part of trail)
 	}
   }
