@@ -2,8 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>The Image Typewriter -- by spirit</title>
+<title>ITW -- ImageTypeWriter -- by spirit</title>
 <script src="../processing.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <style>
 p, li {
 	font-size:10pt;
@@ -14,12 +15,12 @@ p, li {
 </style>
 </head>
 <body>
-<h1>The Image Typewriter</h1>
+<h1>ITW -- ImageTypewriter</h1>
 <p>
-This is a program which lets you type using images instead of characters. You can define a custom mapping of characters to images, or use one of the mappings we provide.
+This is a program which lets you type using images instead of characters. You can also think of it as a software which replaces each character in a text by an image representing (in whatever way) that character in the output. You can define a custom mapping of characters to images, or use one of the mappings we provide. The program can be used for various problems, look at our predefined mappings below to get some ideas.
 </p>
 <p>
-Imaga TypeWriter was written by Tim 'spirit' Schäfer, powered by processing.js.
+ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaScript and Processing.js. You need a fairly recent browser (with HTML5 canvas support) to use it.
 </p>
 
 <form>
@@ -41,13 +42,22 @@ The number indicates the code length, i.e., how many consecutive chars encode fo
   <option value="amino3">(3) Amino acids -- Three letter AA code to chemical structure</option>
 </select>
 
-<div id="show_mapping_preset"></div>
+<div id="show_mapping_preset">
+ <!-- The rows of this table get appended using JS, depending on the selected preset -->
+ <table id="table_mapping_preset" style="width:100%">
+  <caption>Mapping</caption>
+  <tr>
+    <th>Character code</th>
+    <th>Resulting image</th>
+  </tr>
+</table>
+</div>
 
 <h4>Custom mapping</h4>
 <fieldset>
     <legend>Custom mapping:</legend>
     Code length:<br>
-    <input type="text" name="firstname" value="2">
+    <input type="text" name="custom_code_length" value="2">
     <br>
 </fieldset>
 
@@ -60,6 +70,8 @@ The cat eats fish.
 <br><br>
 
 <canvas data-processing-sources="itw.pde"></canvas>
+
 <div id="log"></div>
+
 </body>
 </html>
