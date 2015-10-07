@@ -64,8 +64,8 @@ var kmers = splitStringAtInterval(userText, mappingCodeLength);
 
 
 for (var x = 0; x < kmers.length; x++) {
-  String key = userText.charAt(x);
-  image(images[imagePos.key], 0, 0);
+  String key = kmers[x];
+  image(images[imagePos.key], 50, 50);
   posX += 5;
   posY += 5;
 }
