@@ -31,7 +31,7 @@ background(240, 240, 240);
 strokeWeight(10);
 
 void doLog(string msg) {
-    var el = document.getElementById('log');
+  var el = document.getElementById('log');
   var elContent = el.innerHTML;
   el.innerHTML = elContent + msg + "<br />\n";
 }
@@ -42,11 +42,13 @@ var mappingName = 'test';
 int mappingCodeLength = 1;
 //var mapping = getMappingByName(mappingName);
 
-var mapping = { "A" : "A.png", "B" : "B.png" };
+var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png" };
 
 int posX = 0;
 int posY = 0;
 var numMappings = getObjectSize(mapping);
+
+doLog("There are " + numMappings + " mappings defined in the mapping table.");
 
 // load all the images of the mapping now, so we can quickly use them many times later
 PImage[] images = new PImage[numMappings];
@@ -55,13 +57,16 @@ int i = 0;
 var imagePos = {};
 for (var key in mapping) {
   img = loadImage(mapping[key]);
+  doLog("  Loaded image " + mapping[key] + " into array at position " + i + ".");
   images[i] = img;
   imagePos.key = i;
+  i++;
 }
   
 
 var kmers = splitStringAtInterval(userText, mappingCodeLength);
 
+doLog("There are " + kmers.length + " kmers in the text.");
 
 for (var x = 0; x < kmers.length; x++) {
   String key = kmers[x];
