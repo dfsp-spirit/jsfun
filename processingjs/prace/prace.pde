@@ -34,7 +34,7 @@ gameMode[GM_BALLOON] = false;
 int borderTopBottomHeight = 20;	// the height of the floor / ceiling (from bottom/top of screen)
 
 // Set number of circles
-int count = 15;  // enemy count
+int count = 20;  // enemy count
 if( ! gameMode[GM_ENEMIES]) { count = 0; }
 
 int[] ceilingPointsX;

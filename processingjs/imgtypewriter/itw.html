@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>The Image Typewriter -- by spirit</title>
+<script src="../processing.min.js"></script>
+<style>
+p, li {
+	font-size:10pt;
+	font-family:Arial,sans-serif;
+	line-height:1.5;
+	color:gray
+}
+</style>
+</head>
+<body>
+<h1>The Image Typewriter</h1>
+<p>
+This is a program which lets you type using images instead of characters. You can define a custom mapping of characters to images, or use one of the mappings we provide.
+</p>
+<p>
+Imaga TypeWriter was written by Tim 'spirit' Schäfer, powered by processing.js.
+</p>
+
+<form>
+<h3>Character to Image mapping</h3>
+
+<input type="radio" name="mapping_type" value="preset" checked>Select from presets
+<br>
+<input type="radio" name="mapping_type" value="custom" >Create custom mapping
+  
+<h4>Presets</h4>
+<select name="mappings">
+  <option value="test">Test</option>
+  <option value="anlaute">Anlaute</option>  
+</select>
+
+<h4>Custom mapping</h4>
+<fieldset>
+    <legend>Custom mapping:</legend>
+    Code length:<br>
+    <input type="text" name="firstname" value="2">
+    <br>
+    Last name:<br>
+    <input type="text" name="lastname" value="Mouse">
+    <br><br>
+    <input type="submit" value="Submit">
+  </fieldset>
+
+<h3>Your text</h3>
+<textarea name="text" rows="10" cols="30">
+The cat was playing in the garden.
+</textarea>
+</form>
+
+<br><br>
+
+<canvas data-processing-sources="itw.pde"></canvas>
+<div id="log"></div>
+</body>
+</html>
