@@ -58,6 +58,9 @@ var imagePos = {};
 for (var key in mapping) {
   img = requestImage(mapping[key]);  
   img.loadPixels();
+  
+  while(img.width == 0) {
+  }
   images[i] = img;
   imagePos.key = i;
   doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + ". Image width was " + img.width + " pixels.");
@@ -84,7 +87,7 @@ for (var x = 0; x < kmers.length; x++) {
 	doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
   }
   else {
-    doLog(" -- Image skipped, width was zero. Kept canvas position at " + posX + ", " + posY + ".");
+    doLog(" -- Image skipped, width was zero.");
   }  
 }
 
