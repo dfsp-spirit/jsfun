@@ -73,14 +73,24 @@ int posX = 50;
 int posY = 50;
 
 for (var x = 0; x < kmers.length; x++) {
-  String key = kmers[x];  
-  image(images[imagePos.key], posX, posY);
-  doLog(" - Drawing image mapped to '" + key + "' at canvas position " + posX + ", " + posY + ". Image width is " + images[imagePos.key].width + " pixels.");
-  posX += 20;
-  posY += 20;
+  String key = kmers[x];
+  int imgPos = imagePos.key;
+  img = images[imgPos];
+  doLog(" - Checking image mapped to '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
+  if(img.width > 0) {
+    image(img, posX, posY);
+    posX += 20;
+    posY += 20;
+	doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
+  }
+  else {
+    doLog(" -- Image skipped, width was zero. Kept canvas position at " + posX + ", " + posY + ".");
+  }  
 }
 
 // /* @pjs preload="mappings/test/A.png"; */
+//String url = "https://processing.org/img/processing-web.png";
+//img = loadImage(url);
 //img = loadImage("mappings/test/A.png");
 //img = requestImage("mappings/test/A.png");
 //img.loadPixels();
