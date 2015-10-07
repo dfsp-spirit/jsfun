@@ -30,10 +30,18 @@ Imaga TypeWriter was written by Tim 'spirit' Schäfer, powered by processing.js.
 <input type="radio" name="mapping_type" value="custom" >Create custom mapping
   
 <h4>Presets</h4>
-<select name="mappings">
-  <option value="test">Test</option>
-  <option value="anlaute">Anlaute</option>  
+The number indicates the code length, i.e., how many consecutive chars encode for a single image.
+<select name="mapping_presets">
+  <option value="test">(1) Echo -- Simple test with a monospaced font</option>
+  <option value="test">(1) Mirror -- Another test with a monospaced font</option>
+  <option value="anlaute">(1) Anlaute -- Character to Anlaut image</option>
+  <option value="amino1">(1) Amino acids -- One letter AA code to chemical structure</option>
+  <option value="country">(2) Flags -- Country code to flag </option>
+  <option value="dna">(3) Genetic code -- Codon to amino acid</option>
+  <option value="amino3">(3) Amino acids -- Three letter AA code to chemical structure</option>
 </select>
+
+<div id="show_mapping_preset"></div>
 
 <h4>Custom mapping</h4>
 <fieldset>
@@ -41,15 +49,11 @@ Imaga TypeWriter was written by Tim 'spirit' Schäfer, powered by processing.js.
     Code length:<br>
     <input type="text" name="firstname" value="2">
     <br>
-    Last name:<br>
-    <input type="text" name="lastname" value="Mouse">
-    <br><br>
-    <input type="submit" value="Submit">
-  </fieldset>
+</fieldset>
 
 <h3>Your text</h3>
-<textarea name="text" rows="10" cols="30">
-The cat was playing in the garden.
+<textarea id="usertext" name="usertext" rows="10" cols="30">
+The cat eats fish.
 </textarea>
 </form>
 
