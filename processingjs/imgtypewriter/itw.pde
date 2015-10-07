@@ -45,8 +45,7 @@ int mappingCodeLength = 1;
 //var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png" };
 var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
 
-int posX = 0;
-int posY = 0;
+
 var numMappings = getObjectSize(mapping);
 
 doLog("There are " + numMappings + " mappings defined in the mapping table.");
@@ -57,10 +56,11 @@ PImage img;
 int i = 0;
 var imagePos = {};
 for (var key in mapping) {
-  img = loadImage(mapping[key]);
-  doLog("  Loaded image " + mapping[key] + " into array at position " + i + ".");
+  img = requestImage(mapping[key]);  
+  img.loadPixels();
   images[i] = img;
   imagePos.key = i;
+  doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + ". Image width was " + img.width + " pixels.");
   i++;
 }
   
@@ -69,17 +69,22 @@ var kmers = splitStringAtInterval(userText, mappingCodeLength);
 
 doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
 
+int posX = 50;
+int posY = 50;
+
 for (var x = 0; x < kmers.length; x++) {
   String key = kmers[x];  
-  image(images[imagePos.key], 50, 50);
-  posX += 5;
-  posY += 5;
+  image(images[imagePos.key], posX, posY);
+  doLog(" - Drawing image mapped to '" + key + "' at canvas position " + posX + ", " + posY + ". Image width is " + images[imagePos.key].width + " pixels.");
+  posX += 20;
+  posY += 20;
 }
 
-/* @pjs preload="mappings/test/A.png"; */
-img = loadImage("mappings/test/A.png");
-img.loadPixels();
-image(img, 100, 100);
+// /* @pjs preload="mappings/test/A.png"; */
+//img = loadImage("mappings/test/A.png");
+//img = requestImage("mappings/test/A.png");
+//img.loadPixels();
+//image(img, 100, 100);
 
 stroke(255, 0, 0, 255);
 line(20, 20, 100, 100);
