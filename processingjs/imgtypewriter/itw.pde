@@ -42,7 +42,8 @@ var mappingName = 'test';
 int mappingCodeLength = 1;
 //var mapping = getMappingByName(mappingName);
 
-var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png" };
+//var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png" };
+var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
 
 int posX = 0;
 int posY = 0;
@@ -66,14 +67,19 @@ for (var key in mapping) {
 
 var kmers = splitStringAtInterval(userText, mappingCodeLength);
 
-doLog("There are " + kmers.length + " kmers in the text.");
+doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
 
 for (var x = 0; x < kmers.length; x++) {
-  String key = kmers[x];
+  String key = kmers[x];  
   image(images[imagePos.key], 50, 50);
   posX += 5;
   posY += 5;
 }
+
+/* @pjs preload="mappings/test/A.png"; */
+img = loadImage("mappings/test/A.png");
+img.loadPixels();
+image(img, 100, 100);
 
 stroke(255, 0, 0, 255);
 line(20, 20, 100, 100);
