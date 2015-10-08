@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <title>ITW -- ImageTypeWriter -- by spirit</title>
-<script src="../processing.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="../processing.min.js"></script>
+
 <style>
 p, li {
 	font-size:10pt;
 	font-family:Arial,sans-serif;
 	line-height:1.5;
-	color:gray
+	color:black
 }
+table, th, td {
+   border: 1px solid black;
+} 
 </style>
 </head>
 <body>
-<h1>ITW -- ImageTypewriter</h1>
+<h1>ITW -- ImageTypeWriter</h1>
 <p>
 This is a program which lets you type using images instead of characters. You can also think of it as a software which replaces each character in a text by an image representing (in whatever way) that character in the output. You can define a custom mapping of characters to images, or use one of the mappings we provide. The program can be used for various problems, look at our predefined mappings below to get some ideas.
 </p>
@@ -26,12 +30,15 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 <form>
 <h3>Character to Image mapping</h3>
 
+<!--
 <input type="radio" name="mapping_type" value="preset" checked>Select from presets
 <br>
 <input type="radio" name="mapping_type" value="custom" >Create custom mapping
+-->
   
 <h4>Presets</h4>
-The number indicates the code length, i.e., how many consecutive chars encode for a single image.
+The number indicates the code length, i.e., how many consecutive chars encode for a single image.<br/>
+
 <select name="mapping_presets">
   <option value="test">(1) Echo -- Simple test with a monospaced font</option>
   <option value="test">(1) Mirror -- Another test with a monospaced font</option>
@@ -42,17 +49,20 @@ The number indicates the code length, i.e., how many consecutive chars encode fo
   <option value="amino3">(3) Amino acids -- Three letter AA code to chemical structure</option>
 </select>
 
+<br/>
+Mapping:<br/>
 <div id="show_mapping_preset">
  <!-- The rows of this table get appended using JS, depending on the selected preset -->
  <table id="table_mapping_preset" style="width:100%">
-  <caption>Mapping</caption>
   <tr>
     <th>Character code</th>
+    <th>File</th>
     <th>Resulting image</th>
   </tr>
 </table>
 </div>
 
+<!--
 <h4>Custom mapping</h4>
 <fieldset>
     <legend>Custom mapping:</legend>
@@ -60,6 +70,7 @@ The number indicates the code length, i.e., how many consecutive chars encode fo
     <input type="text" name="custom_code_length" value="2">
     <br>
 </fieldset>
+-->
 
 <h3>Your text</h3>
 <textarea id="usertext" name="usertext" rows="10" cols="30">
@@ -72,6 +83,32 @@ A cat eats fish. An A is not a B.
 <canvas data-processing-sources="itw.pde"></canvas>
 
 <div id="log"></div>
+
+
+<script>
+  var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+  var table = document.getElementById("table_mapping_preset");
+  
+  for(var key in mapping) {
+    var filename = mapping[key];
+    
+    // Create an empty <tr> element and add it to the 1st position of the table:
+    var row = table.insertRow(1);
+    // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+
+    // Add some text to the new cells:
+    cell1.innerHTML = key;
+    cell2.innerHTML = filename;
+    cell3.innerHTML = "<img src='" + filename + "'/>";
+
+
+  }
+
+
+</script>
 
 </body>
 </html>

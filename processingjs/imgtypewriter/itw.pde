@@ -3,6 +3,8 @@
  written :by Tim 'spirit' Schaefer, http://rcmd.org/spirit/
  */
 
+/* @pjs preload="mappings/test/A.png,mappings/test/B.png"; */
+
 size(800, 400);
 PFont font;
 font = loadFont("DINBold.ttf"); 
