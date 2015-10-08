@@ -38,6 +38,15 @@ void doLog(string msg) {
   el.innerHTML = elContent + msg + "<br />\n";
 }
 
+void init() {
+  doLog("Function init called.");
+}
+
+void keyReleased()
+{
+ if (key=='r') { init(); }
+}
+
 
 var userText = document.getElementById('usertext').value;
 var mappingName = 'test';
