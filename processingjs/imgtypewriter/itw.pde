@@ -54,16 +54,24 @@ doLog("There are " + numMappings + " mappings defined in the mapping table.");
 PImage[] images = new PImage[numMappings];
 PImage img;
 int i = 0;
+int useless;
 var imagePos = {};
 for (var key in mapping) {
   img = requestImage(mapping[key]);  
-  img.loadPixels();
   
+
+  useless = 0;
   while(img.width == 0) {
+    useless++;
+    if(useless > 10000) {
+      break;
+    }
   }
+
+  img.loadPixels();
   images[i] = img;
-  imagePos.key = i;
-  doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + ". Image width was " + img.width + " pixels.");
+  imagePos[key] = i;
+  doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + " (check: " + imagePos.key + "). Image width was " + img.width + ", height was " + img.height + " pixels.");
   i++;
 }
   
@@ -72,23 +80,36 @@ var kmers = splitStringAtInterval(userText, mappingCodeLength);
 
 doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
 
+
+String logMsg = "The imagePos object: ";
+for(var p in imagePos) {
+  logMsg += " " + p + "=" + imagePos[p] + "";
+}
+doLog(logMsg);
+
 int posX = 50;
 int posY = 50;
 
 for (var x = 0; x < kmers.length; x++) {
   String key = kmers[x];
-  int imgPos = imagePos.key;
+  int imgPos = imagePos[key];
   img = images[imgPos];
-  doLog(" - Checking image mapped to '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
-  if(img.width > 0) {
-    image(img, posX, posY);
-    posX += 20;
-    posY += 20;
-	doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
+  
+  if(img === undefined) {
+    doLog(" - At kmer number " + x + ", skipping it due to missing image for code '" + key + "'.");
   }
   else {
-    doLog(" -- Image skipped, width was zero.");
-  }  
+    doLog(" - At kmer number " + x + ", checking image mapped to code '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
+    if(img.width > 0) {
+      image(img, posX, posY);
+      posX += img.width;
+      posY += 0;
+      doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + ", height is " + img.height + " pixels.");
+    }
+    else {
+      doLog(" -- Image skipped, width was zero.");
+    }
+  }
 }
 
 // /* @pjs preload="mappings/test/A.png"; */
