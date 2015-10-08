@@ -13,6 +13,18 @@ p, li {
 	line-height:1.5;
 	color:black
 }
+
+.log {
+	font-size:8pt;
+	font-family:Arial,sans-serif;
+	line-height:1.5;
+	color:gray
+}
+
+table {
+    border-collapse: collapse;
+}
+
 table, th, td {
    border: 1px solid black;
 } 
@@ -37,8 +49,9 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 -->
   
 <h4>Presets</h4>
-The number indicates the code length, i.e., how many consecutive chars encode for a single image.<br/>
+The number indicates the code length, i.e., how many consecutive chars encode for a single image.<br/><br/>
 
+Select preset:
 <select name="mapping_presets">
   <option value="test">(1) Echo -- Simple test with a monospaced font</option>
   <option value="test">(1) Mirror -- Another test with a monospaced font</option>
@@ -49,8 +62,10 @@ The number indicates the code length, i.e., how many consecutive chars encode fo
   <option value="amino3">(3) Amino acids -- Three letter AA code to chemical structure</option>
 </select>
 
-<br/>
-Mapping:<br/>
+<br/><br/>
+
+<b>Mapping:</b><br/><br/>
+
 <div id="show_mapping_preset">
  <!-- The rows of this table get appended using JS, depending on the selected preset -->
  <table id="table_mapping_preset" style="width:100%">
@@ -79,10 +94,14 @@ A cat eats fish. An A is not a B.
 </form>
 
 <br><br>
+<h3>Result</h3>
+
 
 <canvas data-processing-sources="itw.pde"></canvas>
 
-<div id="log"></div>
+<br>
+<h3>Log</h3>
+<div id="log" class="log"></div>
 
 
 <script>
