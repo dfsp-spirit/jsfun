@@ -38,9 +38,68 @@ void doLog(string msg) {
   el.innerHTML = elContent + msg + "<br />\n";
 }
 
+var userText;
+var mappingName;
+int mappingCodeLength;
+var mapping;
+var numMappings;
+var kmers;
+var imagePos;
+PImage[] images;
+PImage img;
+
+void setup() {
+  doLog("Function setup called.");
+  // Frame rate
+  frameRate(1);
+  init();
+}
+
 void init() {
   doLog("Function init called.");
+  userText = document.getElementById('usertext').value;
+  mappingName = 'test';
+  mappingCodeLength = 1;
+  mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+  numMappings = getObjectSize(mapping);
+  doLog("There are " + numMappings + " mappings defined in the mapping table.");
+
+  // load all the images of the mapping now, so we can quickly use them many times later
+  images = new PImage[numMappings];
+  int i = 0;
+  int useless;
+  imagePos = {};
+  for (var key in mapping) {
+    img = requestImage(mapping[key]);  
+  
+    useless = 0;
+    while(img.width == 0) {
+      useless++;
+      if(useless > 10000) {
+        break;
+      } 
+    }
+
+    img.loadPixels();
+    images[i] = img;
+    imagePos[key] = i;
+    doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + " (check: " + imagePos.key + "). Image width was " + img.width + ", height was " + img.height + " pixels.");
+    i++;
+  }
+  
+
+  kmers = splitStringAtInterval(userText, mappingCodeLength);
+
+  doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
+
+
+  String logMsg = "The imagePos object: ";
+  for(var p in imagePos) {
+    logMsg += " " + p + "=" + imagePos[p] + "";
+  }
+  doLog(logMsg);
 }
+
 
 void keyReleased()
 {
@@ -48,56 +107,14 @@ void keyReleased()
 }
 
 
-var userText = document.getElementById('usertext').value;
-var mappingName = 'test';
-int mappingCodeLength = 1;
+
 //var mapping = getMappingByName(mappingName);
-
 //var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png" };
-var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+//var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+//var numMappings = getObjectSize(mapping);
 
 
-var numMappings = getObjectSize(mapping);
-
-doLog("There are " + numMappings + " mappings defined in the mapping table.");
-
-// load all the images of the mapping now, so we can quickly use them many times later
-PImage[] images = new PImage[numMappings];
-PImage img;
-int i = 0;
-int useless;
-var imagePos = {};
-for (var key in mapping) {
-  img = requestImage(mapping[key]);  
-  
-
-  useless = 0;
-  while(img.width == 0) {
-    useless++;
-    if(useless > 10000) {
-      break;
-    }
-  }
-
-  img.loadPixels();
-  images[i] = img;
-  imagePos[key] = i;
-  doLog(" - Loaded image '" + mapping[key] + "' for code '" + key + "' into array at position " + i + " (check: " + imagePos.key + "). Image width was " + img.width + ", height was " + img.height + " pixels.");
-  i++;
-}
-  
-
-var kmers = splitStringAtInterval(userText, mappingCodeLength);
-
-doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
-
-
-String logMsg = "The imagePos object: ";
-for(var p in imagePos) {
-  logMsg += " " + p + "=" + imagePos[p] + "";
-}
-doLog(logMsg);
-
+void draw() {
 int posX = 50;
 int posY = 50;
 
@@ -135,3 +152,4 @@ stroke(255, 0, 0, 255);
 line(20, 20, 100, 100);
 
 //save("itw_result.png");
+}
