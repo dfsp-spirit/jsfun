@@ -49,9 +49,9 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 -->
   
 <h4>Presets</h4>
-The number indicates the code length, i.e., how many consecutive chars encode for a single image.<br/><br/>
+<p>The number indicates the code length, i.e., how many consecutive chars encode for a single image.</p>
 
-Select preset:
+<p>Select preset:</p>
 <select name="mapping_presets">
   <option value="test">(1) Echo -- Simple test with a monospaced font</option>
   <option value="test">(1) Mirror -- Another test with a monospaced font</option>
@@ -64,7 +64,7 @@ Select preset:
 
 <br/><br/>
 
-<b>Mapping:</b><br/><br/>
+<p><b>Mapping:</b></p><br/>
 
 <div id="show_mapping_preset">
  <!-- The rows of this table get appended using JS, depending on the selected preset -->
@@ -88,6 +88,7 @@ Select preset:
 -->
 
 <h3>Your text</h3>
+<p>Enter the text you want converted to an image, according to the mapping table defined above.</p>
 <textarea id="usertext" name="usertext" rows="10" cols="30">
 A cat eats fish. An A is not a B.
 </textarea>
@@ -95,12 +96,13 @@ A cat eats fish. An A is not a B.
 
 <br><br>
 <h3>Result</h3>
-<p>Click canvas to update.</p>
+<p>Click canvas to update. (Take a screenshot to save the result for now, there is no exporter yet.)</p>
 
 <canvas data-processing-sources="itw.pde"></canvas>
 
 <br>
 <h3>Log</h3>
+<p>This is the application log, intended for the developer only. Just ignore it. If stuff went wrong when you tried to use this app, write me an email explaining what went wrong and include this log (just copy and paste it into the email).</p>
 <div id="log" class="log"></div>
 
 
