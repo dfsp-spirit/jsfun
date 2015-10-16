@@ -3,7 +3,7 @@
  written :by Tim 'spirit' Schaefer, http://rcmd.org/spirit/
  */
 
-/* @pjs preload="mappings/test/A.png,mappings/test/B.png"; */
+/* @pjs preload="mappings/test/1.png, mappings/test/2.png, mappings/test/3.png, mappings/test/4.png, mappings/test/5.png, mappings/test/6.png, mappings/test/7.png, mappings/test/8.png"; */
 
 size(800, 400);
 PFont font;
@@ -68,7 +68,63 @@ void init() {
   mappingName = 'test';
   mappingCodeLength = 1;
   map = {};
-  mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+  
+  mapping = { 
+                 "A" : "mappings/test/0.png",
+				 "B" : "mappings/test/1.png",
+				 "C" : "mappings/test/2.png",
+				 "D" : "mappings/test/3.png",
+				 "E" : "mappings/test/4.png",
+				 "F" : "mappings/test/5.png",
+				 "G" : "mappings/test/6.png",
+				 "H" : "mappings/test/7.png",
+				 "I" : "mappings/test/8.png",
+				 "J" : "mappings/test/9.png",
+				 "K" : "mappings/test/10.png",
+				 "L" : "mappings/test/11.png",
+				 "M" : "mappings/test/12.png",
+				 "N" : "mappings/test/13.png",
+				 "O" : "mappings/test/14.png",
+				 "P" : "mappings/test/15.png",
+				 "Q" : "mappings/test/16.png",
+				 "R" : "mappings/test/17.png",
+				 "S" : "mappings/test/18.png",
+				 "T" : "mappings/test/19.png",
+				 "U" : "mappings/test/20.png",
+				 "V" : "mappings/test/21.png",
+				 "W" : "mappings/test/22.png",
+				 "X" : "mappings/test/23.png",
+				 "Y" : "mappings/test/24.png",
+				 "Z" : "mappings/test/25.png",
+				 "a" : "mappings/test/0.png",
+				 "b" : "mappings/test/1.png",
+				 "c" : "mappings/test/2.png",
+				 "d" : "mappings/test/3.png",
+				 "e" : "mappings/test/4.png",
+				 "f" : "mappings/test/5.png",
+				 "g" : "mappings/test/6.png",
+				 "h" : "mappings/test/7.png",
+				 "i" : "mappings/test/8.png",
+				 "j" : "mappings/test/9.png",
+				 "k" : "mappings/test/10.png",
+				 "l" : "mappings/test/11.png",
+				 "m" : "mappings/test/12.png",
+				 "n" : "mappings/test/13.png",
+				 "o" : "mappings/test/14.png",
+				 "p" : "mappings/test/15.png",
+				 "q" : "mappings/test/16.png",
+				 "r" : "mappings/test/17.png",
+				 "s" : "mappings/test/18.png",
+				 "t" : "mappings/test/19.png",
+				 "u" : "mappings/test/20.png",
+				 "v" : "mappings/test/21.png",
+				 "w" : "mappings/test/22.png",
+				 "x" : "mappings/test/23.png",
+				 "y" : "mappings/test/24.png",
+				 "z" : "mappings/test/25.png",
+				 " " : "mappings/test/26.png"
+				 };
+    
   map.mapping = mapping;
   map.name = mappingName;
   numMappings = getObjectSize(mapping);
@@ -177,7 +233,7 @@ void draw() {
   //save("itw_result.png");
   
   drawnFrames++;
-  doLog(" DRAW finshed. Drew " + drawnFrames + " frames total so far.");
+  doLog(" DRAW finished. Drew " + drawnFrames + " frames total so far.");
   
   // stop further drawing, it has to be done manually
   noLoop();

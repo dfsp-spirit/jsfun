@@ -103,12 +103,96 @@ A cat eats fish. An A is not a B.
 
 <br>
 <h3>Log</h3>
-<p>This is the application log, intended for the developer only. If stuff went wrong when you tried to use this app, write me an email explaining what went wrong and include this log: just copy and paste it into the email, below your description of the problem. I know that reporting a problem via email is work for you, and I promise I will respond to your email and try to fix the problem.</p>
+<p>This is the application log, intended for the developer only. If stuff went wrong when you tried to use this app, write me an email explaining what went wrong and include this log: just copy and paste it into the email, below your description of the problem. I know that reporting a problem via email is work for you, and I promise I will respond to your email and try to fix the problem. Keep in mind though that it's also work for me to fix it. ;)</p>
 <div id="log" class="log"></div>
 
 
 <script>
-  var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+  var imagemap = {};
+  $.getJSON("mappings/test/test.json", function(data) {
+    //console.log(data);
+	imagemap = data;
+	console.log("Loaded data");
+	console.log(imagemap);
+	console.log("Showing object keys:");
+	console.log(Object.keys(imagemap));
+	console.log("Loaded dir");
+	console.log(imagemap.dir);
+	console.log("Showing data keys:");
+	console.log(Object.keys(data));
+    // data is a JavaScript object now. Handle it as such
+  })  .done(function() {
+    console.log("DONE: Retrieved imagemap from JSON file:" );
+	console.log(imagemap);
+	console.log("DONE: Showing object keys:");
+	console.log(Object.keys(imagemap));
+	//console.log("DONE: Showing data keys:");
+	//console.log(Object.keys(data));
+	//var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
+  var mapname = imagemap.dir;
+  
+  console.log("DONE: Retrieved mapping name from imagemap:" );
+  console.log(mapname);
+  
+  var mapping = {};
+  mapping = imagemap.mapping;
+  // --------------------------------------- set mapping manually for now, all the shit above does nothing --------------------------
+  mapping = { 
+                 "A" : "mappings/test/0.png",
+				 "B" : "mappings/test/1.png",
+				 "C" : "mappings/test/2.png",
+				 "D" : "mappings/test/3.png",
+				 "E" : "mappings/test/4.png",
+				 "F" : "mappings/test/5.png",
+				 "G" : "mappings/test/6.png",
+				 "H" : "mappings/test/7.png",
+				 "I" : "mappings/test/8.png",
+				 "J" : "mappings/test/9.png",
+				 "K" : "mappings/test/10.png",
+				 "L" : "mappings/test/11.png",
+				 "M" : "mappings/test/12.png",
+				 "N" : "mappings/test/13.png",
+				 "O" : "mappings/test/14.png",
+				 "P" : "mappings/test/15.png",
+				 "Q" : "mappings/test/16.png",
+				 "R" : "mappings/test/17.png",
+				 "S" : "mappings/test/18.png",
+				 "T" : "mappings/test/19.png",
+				 "U" : "mappings/test/20.png",
+				 "V" : "mappings/test/21.png",
+				 "W" : "mappings/test/22.png",
+				 "X" : "mappings/test/23.png",
+				 "Y" : "mappings/test/24.png",
+				 "Z" : "mappings/test/25.png",
+				 "a" : "mappings/test/0.png",
+				 "b" : "mappings/test/1.png",
+				 "c" : "mappings/test/2.png",
+				 "d" : "mappings/test/3.png",
+				 "e" : "mappings/test/4.png",
+				 "f" : "mappings/test/5.png",
+				 "g" : "mappings/test/6.png",
+				 "h" : "mappings/test/7.png",
+				 "i" : "mappings/test/8.png",
+				 "j" : "mappings/test/9.png",
+				 "k" : "mappings/test/10.png",
+				 "l" : "mappings/test/11.png",
+				 "m" : "mappings/test/12.png",
+				 "n" : "mappings/test/13.png",
+				 "o" : "mappings/test/14.png",
+				 "p" : "mappings/test/15.png",
+				 "q" : "mappings/test/16.png",
+				 "r" : "mappings/test/17.png",
+				 "s" : "mappings/test/18.png",
+				 "t" : "mappings/test/19.png",
+				 "u" : "mappings/test/20.png",
+				 "v" : "mappings/test/21.png",
+				 "w" : "mappings/test/22.png",
+				 "x" : "mappings/test/23.png",
+				 "y" : "mappings/test/24.png",
+				 "z" : "mappings/test/25.png",
+				 " " : "mappings/test/26.png"
+				 };
+  
   var table = document.getElementById("table_mapping_preset");
   
   for(var key in mapping) {
@@ -128,11 +212,23 @@ A cat eats fish. An A is not a B.
 
 
   }
-  
-  $.getJSON("mappings/test/test.json", function(data) {
-    console.log(data);
-    // data is a JavaScript object now. Handle it as such
+  })
+  .fail(function() {
+    console.log( "error" );
+  })
+  .always(function() {
+    console.log( "complete" );
+	console.log("COMPLETE: Retrieved imagemap from JSON file:" );
+	console.log(imagemap);
+	console.log("COMPLETE: Showing object keys:");
+	console.log(Object.keys(imagemap));
+	//console.log("COMPLETE: Showing data keys:");
+	//console.log(Object.keys(data));
   });
+  
+  
+  
+  
 
 
 </script>
