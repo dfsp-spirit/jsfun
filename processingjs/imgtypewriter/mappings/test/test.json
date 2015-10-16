@@ -1,3 +1,3 @@
 {
-  "map": { "name":"test", "dir":"test", "mapping" : { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" } }
+  "imagemap": { "name":"Test mapping", "dir":"test", "mapping" : { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" } }
 }
