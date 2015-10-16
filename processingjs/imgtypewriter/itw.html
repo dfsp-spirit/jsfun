@@ -65,8 +65,12 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 
 <br/><br/>
 
-<p><b>Mapping:</b></p><br/>
+<p><b>Display active mapping:</b></p>
 
+<div class="text_container">
+	      <h5><i>Click here to show (or hide) the complete character-to-image mapping table.</i></h5>
+	      <div>
+         
 <div id="show_mapping_preset">
  <!-- The rows of this table get appended using JS, depending on the selected preset -->
  <table id="table_mapping_preset" style="width:100%">
@@ -77,6 +81,10 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
   </tr>
 </table>
 </div>
+
+   </div>
+</div>
+
 
 <!--
 <h4>Custom mapping</h4>
@@ -108,7 +116,20 @@ A cat eats fish. An A is not a B.
 
 
 <script>
-  var imagemap = {};
+  $(document).ready(function(){
+      $('.text_container').addClass("hidden");
+
+      $('.text_container').click(function() {
+        var $this = $(this);
+        if ($this.hasClass("hidden")) {
+          $(this).removeClass("hidden").addClass("visible");
+        } else {
+          $(this).removeClass("visible").addClass("hidden");
+        }
+      });
+	  
+	  
+	  var imagemap = {};
   $.getJSON("mappings/test/test.json", function(data) {
     //console.log(data);
 	imagemap = data;
@@ -225,6 +246,11 @@ A cat eats fish. An A is not a B.
 	//console.log("COMPLETE: Showing data keys:");
 	//console.log(Object.keys(data));
   });
+	  
+	  
+    });
+  
+  
   
   
   
