@@ -133,7 +133,7 @@ void keyReleased()
 
 
 void draw() {
-  doLog("Function draw called.");
+  doLog("***** Function draw called. *****");
   reloadUserText();
   
   int posX = 50;
@@ -145,7 +145,9 @@ void draw() {
     img = images[imgPos];
   
     if(img === undefined) {
-      doLog(" - At kmer number " + x + ", skipping it due to missing image for code '" + key + "'.");
+	  if(logging >= 2) {
+        doLog(" - At kmer number " + x + ", skipping it due to missing image for code '" + key + "'.");
+	  }
     }
     else {
       doLog(" - At kmer number " + x + ", checking image mapped to code '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
