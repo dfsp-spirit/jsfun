@@ -190,8 +190,9 @@ void keyReleased()
 //var numMappings = getObjectSize(mapping);
 
 
-void draw() {
+void draw() {  
   doLog("***** Function draw called. *****");
+  background(240, 240, 240);
   reloadUserText();
   
   int lineStartX = 50;
@@ -245,8 +246,8 @@ void draw() {
   //img.loadPixels();
   //image(img, 100, 100);
 
-  stroke(255, 0, 0, 255);
-  line(20, 20, 100, 100);
+  //stroke(255, 0, 0, 255);
+  //line(20, 20, 100, 100);
 
   //save("itw_result.png");
   
