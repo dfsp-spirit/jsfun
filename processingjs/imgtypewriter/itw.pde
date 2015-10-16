@@ -5,7 +5,9 @@
 
 /* @pjs preload="mappings/test/1.png, mappings/test/2.png, mappings/test/3.png, mappings/test/4.png, mappings/test/5.png, mappings/test/6.png, mappings/test/7.png, mappings/test/8.png"; */
 
-size(800, 400);
+int width = 800;
+int height = 400;
+size(width, height);
 PFont font;
 font = loadFont("DINBold.ttf"); 
 textFont(font, 12); 
@@ -192,8 +194,12 @@ void draw() {
   doLog("***** Function draw called. *****");
   reloadUserText();
   
-  int posX = 50;
+  int lineStartX = 50;
+  int lineHeight = 0; // will be adjusted based on height of largest image later
+  int posX = lineStartX;
   int posY = 50;
+  
+  int lettersOnThisLine = 0;
 
   for (var x = 0; x < kmers.length; x++) {
     String key = kmers[x];
@@ -208,10 +214,22 @@ void draw() {
     else {
       doLog(" - At kmer number " + x + ", checking image mapped to code '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
       if(img.width > 0) {
+	   
+	    // do we have to start a new line?
+		if(posX + img.width > width) {
+		  posX = lineStartX;
+		  posY = posY + lineHeight; 
+		}
+	    
+		if(img.height > lineHeight) {
+		  lineHeight = img.height;
+		}
+		
         image(img, posX, posY);
         posX += img.width;
         posY += 0;
-        doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + ", height is " + img.height + " pixels.");
+		lettersOnThisLine++;
+        doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + ", height is " + img.height + " pixels. Line has " + lettersOnThisLine + " images so far.");
       }
       else {
         doLog(" -- Image skipped, width was zero.");
