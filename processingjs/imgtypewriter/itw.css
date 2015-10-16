@@ -1,0 +1,86 @@
+body {
+        background-color: white;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        margin-right: 100px;
+        margin-left: 100px;
+}
+
+.hidden>div {
+    display:none;
+}
+
+.visible>div {
+    display:block;
+}
+
+
+p { font-size:10pt; font-family:Arial,sans-serif;color:black;line-height:20px;}
+p.text { font-size:10pt; font-family:Arial,sans-serif; color:black;line-height:20px; }
+p.code { font-size:10pt; font-family:monospace; color:blue;line-height:20px; }
+p.warn { font-size:10pt; font-family:monospace; color:red;line-height:20px; }
+p.top { font-size:10pt; font-family:Arial,sans-serif; color:black; text-decoration:underline }
+p.big { font-size:14pt; font-family:Arial,sans-serif; color:black }
+p.tiny { font-size:7pt; font-family:Arial,sans-serif; color:black }
+
+h1 { font-size: 14pt; font-family:Arial,sans-serif; text-align: left; color:black }
+h2 { font-size: 14pt; font-family:Arial,sans-serif; text-align: left; color:black }
+h3 { font-size: 12pt; font-family:Arial,sans-serif; text-align: left; color:black }
+h3 { font-size: 12pt; font-family:Arial,sans-serif; text-align: left; color:black }
+h4 { font-size: 10pt; font-family:Arial,sans-serif; text-align: left; color:black }
+h4 { font-size: 10pt; font-family:Arial,sans-serif; text-align: left; color:black }
+
+
+ul {
+font-family: Arial, sans-serif;
+font-size: 10pt;
+line-height:20px;
+color: black;
+text-decoration: none;
+}
+
+img.myborder {
+  border:1px solid #C0C0C0;
+}
+
+a:link {
+        font-size:10pt;
+        line-height:20px;
+        font-family:Arial,sans-serif;
+        color:#800000;
+        text-decoration:none
+}
+
+p tinylink {font-size:7pt; color:#800000; text-decoration:none }
+
+a:visited { font-size:10pt; color:#800000; text-decoration:none;line-height:20px; }
+a:hover { font-size:10pt; color:#FF0000; text-decoration:none;line-height:20px; }
+a:active { font-size:10pt; color:#FF0000; text-decoration:none;line-height:20px; }
+a:focus { font-size:10pt;color:#800000; text-decoration:none;line-height:20px; }
+
+td.caption { text-align: left; font-size:8pt; font-family:Arial,sans-serif; color:black; }
+table.image { margin-left: 4em; }
+
+table,th, td
+{
+  font-size:10pt; font-family:Arial,sans-serif; color:black;line-height:20px;
+  padding:10px;
+
+}
+
+table.visborder td, th
+{
+  border: 1px solid #C0C0C0;
+}
+
+
+Span.CENTERTEXT
+{
+        text-align: center;
+
+}
+
+div.CENTERTEXT
+{
+        text-align: center;
+}
