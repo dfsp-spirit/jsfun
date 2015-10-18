@@ -283,6 +283,14 @@ void init() {
 
 void reloadUserText() {
   userText = document.getElementById('usertext').value;
+  // special handling for newline characters: they have to be treated as a kmer, i.e., extended to the current value of keep
+  int numSpacesToAdd = (mappingCodeLength > 1 ? mappingCodeLength - 1 : 0);
+  var spacesText = "";
+  if(numSpacesToAdd > 0) {
+    spacesText = Array(numSpacesToAdd + 1).join(" ");
+  }
+  userText = userText.replace(/(?:\r\n|\r|\n)/g, "\n" + spacesText);
+
   kmers = splitStringAtInterval(userText, mappingCodeLength);
 }
 
@@ -306,13 +314,26 @@ void draw() {
   
   int lineStartX = 50;
   int lineHeight = 0; // will be adjusted based on height of largest image later
+  int minimumLineHeight = 50;  // the minimal line height (also applies to height of empty lines). set to zero to ignore if the user presses RETURN in the input field.
+  
+  lineHeight = minimumLineHeight;
+  
   int posX = lineStartX;
   int posY = 50;
   
   int lettersOnThisLine = 0;
 
+
   for (var x = 0; x < kmers.length; x++) {
     String key = kmers[x];
+	
+	// special handling of newline characters: add a new line, ignore the rest of the kmer (note that newlines have been extended to the length of k before, by adding spaces if k > 1)
+	if(key[0] == "\n") {
+	  posX = lineStartX;
+	  posY = posY + lineHeight;
+      lettersOnThisLine = 0;
+	}
+	
     int imgPos = imagePos[key];
     img = images[imgPos];
   
@@ -328,7 +349,8 @@ void draw() {
 	    // do we have to start a new line?
 		if(posX + img.width > width) {
 		  posX = lineStartX;
-		  posY = posY + lineHeight; 
+		  posY = posY + lineHeight;
+          lettersOnThisLine = 0;		  
 		}
 	    
 		// keep track of the highest image, use it as the line height.
