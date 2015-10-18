@@ -5,8 +5,18 @@
 
 /* @pjs preload="mappings/test/1.png, mappings/test/2.png, mappings/test/3.png, mappings/test/4.png, mappings/test/5.png, mappings/test/6.png, mappings/test/7.png, mappings/test/8.png"; */
 
-int width = 800;
-int height = 600;
+
+
+
+int width = 2400;
+int height = 2400;
+
+function updateCanvasWidthFromUserSettings() {
+  var user_width = document.getElementById('user_canvas_width').value;
+  var user_height = document.getElementById('user_canvas_height').value;
+  size(user_width, user_height);
+}
+
 size(width, height);
 PFont font;
 font = loadFont("DINBold.ttf"); 
@@ -361,5 +371,6 @@ void draw() {
 // continue drawing if user presses mouse
 void mousePressed() {
   //size(800, 600);
+  updateCanvasWidthFromUserSettings();
   loop();
 }
