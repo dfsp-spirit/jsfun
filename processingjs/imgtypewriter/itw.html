@@ -99,14 +99,16 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 <h3>Your text</h3>
 <p>Enter the text you want converted to an image, according to the mapping table defined above.</p>
 <textarea id="usertext" name="usertext" rows="10" cols="30">
-A cat eats fish. An A is not a B.
+Die Katze schläft.
+
+Vera mag Kekse.
 </textarea>
 </form>
 
-<br><br>
+
 <h3>Result</h3>
-<p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. Note that the maximum size depends on your browser.<br/><br/>
-Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600"> pixels<br/>
+<p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. My suggestion is to make it fit on your entire screen. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/><br/>
+Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
 Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change. (Take a screenshot to save the result for now, there is no exporter yet.)</p>
 
@@ -320,6 +322,68 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 				 " " : "mappings/anlaute/Leeres_Bild.jpg"
 				 };
   
+  
+  mapping_anlaute2 = { 
+                 "a" : "mappings/anlaute2/Apfel.jpg",
+				 "A" : "mappings/anlaute2/Apfel.jpg",
+				 "ä" : "mappings/anlaute2/Aepfel.jpg",
+				 "Ä" : "mappings/anlaute2/Aepfel.jpg",
+				 "1" : "mappings/anlaute2/Auto.jpg",
+				 "B" : "mappings/anlaute2/Baum.jpg",
+				 "b" : "mappings/anlaute2/Baum.jpg",
+				 "D" : "mappings/anlaute2/Dino.jpg",
+				 "d" : "mappings/anlaute2/Dino.jpg",
+				 "2" : "mappings/anlaute2/Eis.jpg",
+				 "e" : "mappings/anlaute2/Esel.jpg",
+				 "E" : "mappings/anlaute2/Eule.jpg",
+				 "F" : "mappings/anlaute2/Fisch.jpg",
+				 "f" : "mappings/anlaute2/Fisch.jpg",
+				 "G" : "mappings/anlaute2/Gabel.jpg",
+				 "g" : "mappings/anlaute2/Gong.jpg",
+				 "H" : "mappings/anlaute2/Hut.jpg",
+				 "h" : "mappings/anlaute2/Hut.jpg",
+				 "I" : "mappings/anlaute2/Ich.jpg",
+				 "i" : "mappings/anlaute2/Insel.jpg",
+				 "j" : "mappings/anlaute2/Jo-Jo.jpg",
+				 "J" : "mappings/anlaute2/Jo-Jo.jpg",
+				 "k" : "mappings/anlaute2/Koch.jpg",
+				 "K" : "mappings/anlaute2/Koch.jpg",
+				 "l" : "mappings/anlaute2/Lampe.jpg",
+				 "L" : "mappings/anlaute2/Lampe.jpg",
+				 "m" : "mappings/anlaute2/Maus.jpg",
+				 "M" : "mappings/anlaute2/Maus.jpg",
+				 "n" : "mappings/anlaute2/Nase.jpg",
+				 "N" : "mappings/anlaute2/Nase.jpg",
+				 "O" : "mappings/anlaute2/Ofen.jpg",
+				 "o" : "mappings/anlaute2/Ofen.jpg",
+				 "Ö" : "mappings/anlaute2/Oellampe.jpg",
+				 "ö" : "mappings/anlaute2/Oellampe.jpg",
+				 "p" : "mappings/anlaute2/Paket.jpg",
+				 "P" : "mappings/anlaute2/Paket.jpg",
+				 "q" : "mappings/anlaute2/Qualle.jpg",
+				 "Q" : "mappings/anlaute2/Qualle.jpg",
+				 "r" : "mappings/anlaute2/Rakete.jpg",
+				 "R" : "mappings/anlaute2/Rakete.jpg",
+				 "s" : "mappings/anlaute2/Schaaf.jpg",
+				 "S" : "mappings/anlaute2/Sofa.jpg",
+				 "3" : "mappings/anlaute2/Spinne.jpg",
+				 "4" : "mappings/anlaute2/Stern.jpg",
+				 "t" : "mappings/anlaute2/Tisch.jpg",
+				 "T" : "mappings/anlaute2/Tisch.jpg",
+				 "U" : "mappings/anlaute2/Ufo.jpg",
+				 "u" : "mappings/anlaute2/Ufo.jpg",
+				 "ü" : "mappings/anlaute2/Ueberholverbot.jpg",
+				 "Ü" : "mappings/anlaute2/Ueberholverbot.jpg",
+				 "v" : "mappings/anlaute2/VX.jpg",
+				 "V" : "mappings/anlaute2/VX.jpg",
+				 "w" : "mappings/anlaute2/Wolke.jpg",
+				 "W" : "mappings/anlaute2/Wolke.jpg",
+				 "y" : "mappings/anlaute2/YC.jpg",
+				 "Y" : "mappings/anlaute2/YC.jpg",
+				 "Z" : "mappings/anlaute2/Zirkus.jpg",
+				 "z" : "mappings/anlaute2/Zirkus.jpg",
+				 " " : "mappings/anlaute2/Leeres_Bild.jpg"
+				 };
   
   mapping = mapping_anlaute;
   
