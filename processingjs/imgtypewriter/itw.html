@@ -68,21 +68,21 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 <p><b>Display active mapping:</b></p>
 
 <div class="text_container">
-	      <h5><i>Click here to show (or hide) the complete character-to-image mapping table.</i></h5>
-	      <div>
+  <h5><i>Click here to show (or hide) the complete character-to-image mapping table.</i></h5>
+  <div>
          
-<div id="show_mapping_preset">
- <!-- The rows of this table get appended using JS, depending on the selected preset -->
- <table id="table_mapping_preset" style="width:100%">
-  <tr>
-    <th>Character code</th>
-    <th>File</th>
-    <th>Resulting image</th>
-  </tr>
-</table>
-</div>
-
-   </div>
+    <div id="show_mapping_preset">
+    <!-- The rows of this table get appended using JS, depending on the selected preset -->
+    <table id="table_mapping_preset" style="width:100%">
+      <tr>
+        <th>Character code</th>
+        <th>File</th>
+      <th>Resulting image</th>
+      </tr>
+    </table>
+    </div>
+	
+  </div>
 </div>
 
 
@@ -115,7 +115,13 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 <br>
 <h3>Log</h3>
 <p>This is the application log, intended for the developer only. If stuff went wrong when you tried to use this app, write me an email explaining what went wrong and include this log: just copy and paste it into the email, below your description of the problem. I know that reporting a problem via email is work for you, and I promise I will respond to your email and try to fix the problem. Keep in mind though that it's also work for me to fix it. ;)</p>
-<div id="log" class="log"></div>
+<div class="text_container">
+  <h5><i>Click here to show (or hide) the log messages.</i></h5>
+  <div>
+
+    <div id="log" class="log"></div>
+  </div>
+</div>
 
 
 <script>
