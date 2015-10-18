@@ -156,9 +156,11 @@ A cat eats fish. An A is not a B.
   console.log(mapname);
   
   var mapping = {};
+  var mapping_test = {};
+  var mapping_anlaute = {};
   mapping = imagemap.mapping;
   // --------------------------------------- set mapping manually for now, all the shit above does nothing --------------------------
-  mapping = { 
+  mapping_test = { 
                  "A" : "mappings/test/0.png",
 				 "B" : "mappings/test/1.png",
 				 "C" : "mappings/test/2.png",
@@ -236,6 +238,81 @@ A cat eats fish. An A is not a B.
 				 ")" : "mappings/test/74.png",
 				 " " : "mappings/test/75.png"
 				 };
+				 
+  mapping_anlaute = { 
+                 "A" : "mappings/anlaute/Ameise.jpg",
+				 "a" : "mappings/anlaute/Apfel.jpg",
+				 "ä" : "mappings/anlaute/Aepfel.jpg",
+				 "Ä" : "mappings/anlaute/Auto.jpg",
+				 "B" : "mappings/anlaute/Banane.jpg",
+				 "b" : "mappings/anlaute/Banane.jpg",
+				 "c" : "mappings/anlaute/Cent.jpg",
+				 "C" : "mappings/anlaute/Chamaelion.jpg",
+				 "1" : "mappings/anlaute/Chinese.jpg",
+				 "2" : "mappings/anlaute/Computer.jpg",
+				 "3" : "mappings/anlaute/Computer_Cent.jpg",
+				 "D" : "mappings/anlaute/Dino.jpg",
+				 "d" : "mappings/anlaute/Dino.jpg",
+				 "E" : "mappings/anlaute/Eis.jpg",
+				 "e" : "mappings/anlaute/Ente.jpg",
+				 "4" : "mappings/anlaute/Esel_Ente.jpg",
+				 "5" : "mappings/anlaute/Esel.jpg",
+				 "6" : "mappings/anlaute/Eule.jpg",
+				 "F" : "mappings/anlaute/Fisch.jpg",
+				 "f" : "mappings/anlaute/Fisch.jpg",
+				 "G" : "mappings/anlaute/Gabel.jpg",
+				 "g" : "mappings/anlaute/Gabel.jpg",
+				 "H" : "mappings/anlaute/Hut.jpg",
+				 "h" : "mappings/anlaute/Hut.jpg",
+				 "I" : "mappings/anlaute/Ich_Dach.jpg",
+				 "i" : "mappings/anlaute/Igel.jpg",
+				 "7" : "mappings/anlaute/Insel.jpg",
+				 "J" : "mappings/anlaute/Jo-Jo.jpg",
+				 "j" : "mappings/anlaute/Jo-Jo.jpg",
+				 "K" : "mappings/anlaute/Kiwi.jpg",
+				 "k" : "mappings/anlaute/Kiwi.jpg",
+				 "L" : "mappings/anlaute/Loewe.jpg",
+				 "l" : "mappings/anlaute/Loewe.jpg",
+				 "M" : "mappings/anlaute/Maus.jpg",
+				 "m" : "mappings/anlaute/Maus.jpg",
+				 "N" : "mappings/anlaute/Nest.jpg",
+				 "n" : "mappings/anlaute/Nest.jpg",
+				 "O" : "mappings/anlaute/Ofen.jpg",
+				 "o" : "mappings/anlaute/Ordner.jpg",
+				 "Ö" : "mappings/anlaute/Oellampe.jpg",
+				 "ö" : "mappings/anlaute/Oellampe.jpg",
+				 "p" : "mappings/anlaute/Palme.jpg",
+				 "P" : "mappings/anlaute/Pfeil.jpg",
+				 "Q" : "mappings/anlaute/Qualle.jpg",
+				 "q" : "mappings/anlaute/Qualle.jpg",
+				 "R" : "mappings/anlaute/Rakete.jpg",
+				 "r" : "mappings/anlaute/Rakete.jpg",
+				 "s" : "mappings/anlaute/Schere.jpg",
+				 "8" : "mappings/anlaute/Sofa.jpg",
+				 "9" : "mappings/anlaute/Spinne.jpg",
+				 "0" : "mappings/anlaute/Stern.jpg",
+				 "t" : "mappings/anlaute/Tisch.jpg",
+				 "T" : "mappings/anlaute/Tisch.jpg",
+				 "u" : "mappings/anlaute/Ufo.jpg",
+				 "U" : "mappings/anlaute/Unterhemd.jpg",
+				 "Ü" : "mappings/anlaute/Ueberholverbot.jpg",
+				 "ü" : "mappings/anlaute/Ueberholverbot.jpg",
+				 "v" : "mappings/anlaute/Vase.jpg",
+				 "V" : "mappings/anlaute/Vogel.jpg",
+				 "(" : "mappings/anlaute/Vogel_Vase.jpg",
+				 "w" : "mappings/anlaute/Wolke.jpg",
+				 "W" : "mappings/anlaute/Wolke.jpg",
+				 "x" : "mappings/anlaute/Xylophon.jpg",
+				 "X" : "mappings/anlaute/Xylophon.jpg",
+				 "y" : "mappings/anlaute/Yak.jpg",
+				 "Y" : "mappings/anlaute/Yak.jpg",
+				 "z" : "mappings/anlaute/Zaun.jpg",
+				 "Z" : "mappings/anlaute/Zaun.jpg",
+				 " " : "mappings/anlaute/Leeres_Bild.jpg"
+				 };
+  
+  
+  mapping = mapping_anlaute;
   
   var table = document.getElementById("table_mapping_preset");
   
