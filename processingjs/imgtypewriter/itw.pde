@@ -427,7 +427,28 @@ void draw() {
       if(img.width > 0) {
 	   
 	    // rescale image if requested by user
-		if(userImageWidth > 0 && userImageHeight > 0) {
+		if(userImageWidth > 0 || userImageHeight > 0) {
+		  
+		  // we need to take special precautions if one of the values is zero
+		  if(userImageWidth == 0 || userImageHeight == 0) {
+		    var scaling;
+		    if(userImageHeight == 0) {
+			  scaling = userImageWidth / img.width;
+			  userImageHeight = img.height * scaling;
+			  if(logging >= 1) {
+                doLog(" * Adjusted user image height of zero to " + userImageHeight + ".");
+	          }
+			}
+			
+			if(userImageWidth == 0) {
+			  scaling = userImageHeight / img.height;
+			  userImageWidth = img.width * scaling;
+			  if(logging >= 1) {
+                doLog(" * Adjusted user image width of zero to " + userImageWidth + ".");
+	          }
+			}
+		  }
+		  
 		  if(logging >= 1) {
             doLog(" * Resizing image to " + userImageWidth + "x" + userImageHeight + " by user request in advanced settings.");
 	      }
