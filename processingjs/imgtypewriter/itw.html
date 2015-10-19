@@ -53,7 +53,7 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 <p>The number indicates the code length, i.e., how many consecutive chars encode for a single image.</p>
 
 <p>Select a character-to-image mapping preset:</p>
-<select name="mapping_presets">
+<select name="mapping_preset_select" id="mapping_preset_select">
   <option value="test">(1) Echo -- Simple test with a monospaced font</option>
   <option value="mirror">(1) Mirror -- Another test with a monospaced font</option>
   <option value="anlaute">(1) Anlaute -- Character to Anlaut image</option>
@@ -396,7 +396,22 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
 				 " " : "mappings/anlaute2/Leeres_Bild.jpg"
 				 };
   
-  mapping = mapping_anlaute2;
+  
+  function updateActiveMapping() {
+    // Use the mapping selected in the box. Note that we need to reload this when the selection in the box changes.
+    var selMapU = document.getElementById("mapping_preset_select");
+    var selectedMapping = selMapU.options[selMapU.selectedIndex].value;
+  
+    mapping = mapping_test; // default mapping
+    if(selectedMapping == "anlaute") { mapping = mapping_anlaute; }
+    else if(selectedMapping == "anlaute2") { mapping = mapping_anlaute2; }
+	else { mapping = mapping_test; }
+  }
+  
+  var selMap = document.getElementById("mapping_preset_select");  
+  selMap.addEventListener("change",  function() { updateActiveMapping(); Processing.reload(); } );
+  
+  
   
   // prefix it with the server url
   //for(var key in mapping) {
