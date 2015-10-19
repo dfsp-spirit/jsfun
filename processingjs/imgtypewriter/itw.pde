@@ -300,12 +300,14 @@ void init() {
 				 " " : "mappings/anlaute2/Leeres_Bild.jpg"
 				 };
   
-  mapping = mapping_anlaute2;
+
+  // Use the mapping selected in the box. Note that we need to reload this when the selection in the box changes.
+  var selMapU = document.getElementById("mapping_preset_select");
+  var selectedMapping = selMapU.options[selMapU.selectedIndex].value;
   
-  // prefix it with the server url
-  //for(var key in mapping) {
-    //mapping[key] = mapping_server_base_url + mapping[key];
-  //}
+  mapping = mapping_test; // default mapping
+  if(selectedMapping == "anlaute") { mapping = mapping_anlaute; }
+  else if(selectedMapping == "anlaute2") { mapping = mapping_anlaute2; }
   
   
   map.mapping = mapping;
