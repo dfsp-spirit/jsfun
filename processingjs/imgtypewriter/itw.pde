@@ -66,8 +66,11 @@ var mapping_anlaute;
 var numMappings;
 var kmers;
 var imagePos;
+var mapping_server_base_url;
 PImage[] images;
 PImage img;
+var userImageWidth = 0;
+var userImageHeight = 0;
 
 void setup() {
   doLog("Function setup called.");
@@ -82,6 +85,7 @@ void init() {
   mappingName = 'test';
   mappingCodeLength = 1;
   map = {};
+  mapping_server_base_url = "http://rcmd.org/webapps/imgtypewriter/";
   
   mapping_test = { 
                  "A" : "mappings/test/0.png",
@@ -296,7 +300,13 @@ void init() {
 				 " " : "mappings/anlaute2/Leeres_Bild.jpg"
 				 };
   
-  mapping = mapping_anlaute;
+  mapping = mapping_anlaute2;
+  
+  // prefix it with the server url
+  //for(var key in mapping) {
+    //mapping[key] = mapping_server_base_url + mapping[key];
+  //}
+  
   
   map.mapping = mapping;
   map.name = mappingName;
@@ -340,7 +350,14 @@ void init() {
   
   doLog("- loading usertext.");
   reloadUserText();
+  reloadAdvancedSettings();
   doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
+}
+
+
+void reloadAdvancedSettings() {
+  userImageWidth = document.getElementById('user_image_width').value;
+  userImageHeight = document.getElementById('user_image_height').value;
 }
 
 void reloadUserText() {
@@ -373,6 +390,7 @@ void draw() {
   doLog("***** Function draw called. *****");
   background(240, 240, 240);
   reloadUserText();
+  reloadAdvancedSettings();
   
   int lineStartX = 50;
   int lineHeight = 0; // will be adjusted based on height of largest image later
@@ -407,6 +425,14 @@ void draw() {
     else {
       doLog(" - At kmer number " + x + ", checking image mapped to code '" + key + "' from " + imgPos + " at canvas position " + posX + ", " + posY + ". Image width is " + img.width + " pixels.");
       if(img.width > 0) {
+	   
+	    // rescale image if requested by user
+		if(userImageWidth > 0 && userImageHeight > 0) {
+		  if(logging >= 1) {
+            doLog(" * Resizing image to " + userImageWidth + "x" + userImageHeight + " by user request in advanced settings.");
+	      }
+		  img.resize(userImageWidth, userImageHeight);
+		}
 	   
 	    // do we have to start a new line?
 		if(posX + img.width > width) {
