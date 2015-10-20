@@ -171,7 +171,8 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
 	//console.log("DONE: Showing data keys:");
 	//console.log(Object.keys(data));
 	//var mapping = { "A" : "mappings/test/A.png", "B" : "mappings/test/B.png", "C" : "mappings/test/C.png" };
-  var mapname = imagemap.dir;
+  var mapname = imagemap.dir;  
+  mapping = imagemap.mapping;
   
   console.log("DONE: Retrieved mapping name from imagemap:" );
   console.log(mapname);
@@ -179,10 +180,11 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
   var mapping = {};
   var mapping_test = {};
   var mapping_anlaute = {};
+  var mapping_anlaute2 = {};
   
   var mapping_server_base_url = "http://rcmd.org/webapps/imgtypewriter/";
   
-  mapping = imagemap.mapping;
+  
   // --------------------------------------- set mapping manually for now, all the shit above does nothing --------------------------
   mapping_test = { 
                  "A" : "mappings/test/0.png",
@@ -408,12 +410,31 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
     if(selectedMapping == "anlaute") { mapping = mapping_anlaute; }
     else if(selectedMapping == "anlaute2") { mapping = mapping_anlaute2; }
 	else { mapping = mapping_test; }
+	
+    var table = document.getElementById("table_mapping_preset");
+  
+    for(var key in mapping) {
+      var filename = mapping[key];
+    
+      // Create an empty <tr> element and add it to the 1st position of the table:
+      var row = table.insertRow(1);
+      // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+
+      // Add some text to the new cells:
+      cell1.innerHTML = key;
+      cell2.innerHTML = filename;
+      cell3.innerHTML = "<img src='" + filename + "' alt='WARNING: Could not load image file.'/>";
+    }
   }
   
   var selMap = document.getElementById("mapping_preset_select");  
   selMap.addEventListener("change",  function() { updateActiveMapping(); Processing.reload(); } );
   
-  
+  // update the mapping on 1st page load
+  updateActiveMapping();
   
   // prefix it with the server url
   //for(var key in mapping) {
@@ -421,25 +442,7 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
   //}
   
   
-  var table = document.getElementById("table_mapping_preset");
   
-  for(var key in mapping) {
-    var filename = mapping[key];
-    
-    // Create an empty <tr> element and add it to the 1st position of the table:
-    var row = table.insertRow(1);
-    // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-
-    // Add some text to the new cells:
-    cell1.innerHTML = key;
-    cell2.innerHTML = filename;
-    cell3.innerHTML = "<img src='" + filename + "' alt='WARNING: Could not load image file.'/>";
-
-
-  }
   })
   .fail(function() {
     console.log( "error" );
