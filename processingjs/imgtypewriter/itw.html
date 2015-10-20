@@ -37,7 +37,7 @@ table, th, td {
 This is a program which lets you type using images instead of characters. You can also think of it as a software which replaces each character in a text by an image representing (in whatever way) that character in the output. You can define a custom mapping of characters to images, or use one of the mappings we provide. The program can be used for various problems, look at our predefined mappings below to get some ideas.
 </p>
 <p>
-ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaScript and Processing.js. You need a fairly recent browser (with HTML5 canvas support, and of course with Javascript enabled) to use it. ITW was tested with the free browser FireFox.
+ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaScript and Processing.js. You need a fairly recent browser (with HTML5 canvas support, and of course with Javascript enabled) to use it. ITW was tested with recent versions of Mozilla FireFox and Google Chrome.
 </p>
 
 <form>
@@ -114,7 +114,7 @@ Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="numbe
 Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
 Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change. (Take a screenshot to save the result for now, there is no exporter yet.)</p>
 
-<canvas data-processing-sources="itw.pde"></canvas>
+<canvas data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
 
 <br>
 <h4>Advanced options</h4>

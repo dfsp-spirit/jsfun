@@ -8,8 +8,9 @@
 
 
 
-int width = 2400;
-int height = 2400;
+//int width = 1600;
+//int height = 1600;
+//size(width, height);
 
 function updateCanvasWidthFromUserSettings() {
   var user_width = document.getElementById('user_canvas_width').value;
@@ -17,7 +18,8 @@ function updateCanvasWidthFromUserSettings() {
   size(user_width, user_height);
 }
 
-size(width, height);
+updateCanvasWidthFromUserSettings();
+
 PFont font;
 font = loadFont("DINBold.ttf"); 
 textFont(font, 12); 
@@ -45,7 +47,7 @@ function getObjectSize(myObject) {
 }
 
 smooth();
-background(240, 240, 240);
+background(255, 255, 255);
 strokeWeight(10);
 
 void doLog(string msg) {
@@ -390,7 +392,7 @@ void keyReleased()
 
 void draw() {  
   doLog("***** Function draw called. *****");
-  background(240, 240, 240);
+  background(255, 255, 255);
   reloadUserText();
   reloadAdvancedSettings();
   
