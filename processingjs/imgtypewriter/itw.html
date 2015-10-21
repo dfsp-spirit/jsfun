@@ -114,9 +114,12 @@ Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="numbe
 Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
 Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change. (Take a screenshot to save the result for now, there is no exporter yet.)</p>
 
-<canvas data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
+<canvas id="canvas" data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
 
 <br>
+<a id="download">Download canvas as image</a>
+<br>
+
 <h4>Advanced options</h4>
 <p>
 <b>Image scaling</b><br/>
@@ -184,6 +187,25 @@ Force image height: <input id="user_image_height" name="user_image_height" type=
   
   var mapping_server_base_url = "http://rcmd.org/webapps/imgtypewriter/";
   
+  
+  /**
+ * This is the function that will take care of image extracting and
+ * setting proper filename for the download.
+ * IMPORTANT: Call it from within a onclick event.
+*/
+function downloadCanvas(link, canvasId, filename) {
+    link.href = document.getElementById(canvasId).toDataURL();
+    link.download = filename;
+}
+
+/** 
+ * The event handler for the link's onclick event. We give THIS as a
+ * parameter (=the link element), ID of the canvas and a filename.
+*/
+document.getElementById('download').addEventListener('click', function() {
+    downloadCanvas(this, 'canvas', 'itw_canvas.png');
+}, false);
+
   
   // --------------------------------------- set mapping manually for now, all the shit above does nothing --------------------------
   mapping_test = { 

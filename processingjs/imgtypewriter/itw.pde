@@ -20,6 +20,7 @@ function updateCanvasWidthFromUserSettings() {
 
 updateCanvasWidthFromUserSettings();
 
+
 PFont font;
 font = loadFont("DINBold.ttf"); 
 textFont(font, 12); 
@@ -357,6 +358,7 @@ void init() {
   reloadAdvancedSettings();
   doLog("There are " + kmers.length + " kmers of length " + mappingCodeLength + " in the text of total length " + userText.length + " chars.");
 }
+
 
 
 void reloadAdvancedSettings() {
