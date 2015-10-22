@@ -486,8 +486,15 @@ void draw() {
         image(img, posX, posY);
 	if(drawWritingLinesInBetweenOtherLines) {
 	  doLog(" * Drawing the writing line below image.");
-	  strokeWeight(1); stroke(0);
-	  line(posX, posY + lineHeight + (lineHeight / 2), posX + img.width, posY + lineHeight + (lineHeight / 2));
+	  strokeWeight(1); stroke(0);	  
+	  var nl = document.getElementById('user_num_writing_lines').value;
+	  var ld = document.getElementById('user_writing_lines_dist').value;
+	  if(nl > 0) {
+	    for(int l = 0; l < nl; l++) {
+	      int yLinePos = posY + lineHeight + (lineHeight / 2) - (l * ld);
+	      line(posX, yLinePos, posX + img.width, yLinePos);
+	    }
+	  }
 	}
         posX += img.width;
         posY += 0;
