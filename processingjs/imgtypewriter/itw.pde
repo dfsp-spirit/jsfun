@@ -74,6 +74,7 @@ PImage[] images;
 PImage img;
 var userImageWidth = 0;
 var userImageHeight = 0;
+var drawWritingLinesInBetweenOtherLines = "";
 
 void setup() {
   doLog("Function setup called.");
@@ -364,6 +365,7 @@ void init() {
 void reloadAdvancedSettings() {
   userImageWidth = document.getElementById('user_image_width').value;
   userImageHeight = document.getElementById('user_image_height').value;
+  drawWritingLinesInBetweenOtherLines = document.getElementById('checkbox_draw_lines').checked;
 }
 
 void reloadUserText() {
@@ -417,6 +419,9 @@ void draw() {
 	if(key[0] == "\n") {
 	  posX = lineStartX;
 	  posY = posY + lineHeight;
+	  if(drawWritingLinesInBetweenOtherLines) {
+		    posY = posY + lineHeight;
+		  }
       lettersOnThisLine = 0;
 	}
 	
@@ -465,15 +470,25 @@ void draw() {
 		if(posX + img.width > width) {
 		  posX = lineStartX;
 		  posY = posY + lineHeight;
+		  if(drawWritingLinesInBetweenOtherLines) {
+		    posY = posY + lineHeight;
+		  }
+		  
+		  
           lettersOnThisLine = 0;		  
 		}
 	    
 		// keep track of the highest image, use it as the line height.
 		if(img.height > lineHeight) {
 		  lineHeight = img.height;
-		}
+		}			
 		
         image(img, posX, posY);
+	if(drawWritingLinesInBetweenOtherLines) {
+	  doLog(" * Drawing the writing line below image.");
+	  strokeWeight(1); stroke(0);
+	  line(posX, posY + lineHeight + (lineHeight / 2), posX + img.width, posY + lineHeight + (lineHeight / 2));
+	}
         posX += img.width;
         posY += 0;
 		lettersOnThisLine++;
