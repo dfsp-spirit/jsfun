@@ -112,13 +112,16 @@ Vera mag Kekse.
 <p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. My suggestion is to make it fit on your entire screen. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/><br/>
 Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
-Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change. (Take a screenshot to save the result for now, there is no exporter yet.)</p>
+Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change.</p>
+<p>
+<b>Download the result as an image file:</b> <a id="download_png_top">PNG format</a> or <a id="download_jpg_top">JPG format</a>
+</p>
 
 <canvas id="canvas" data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
 
-<br>
-<a id="download">Download canvas as image</a>
-<br>
+<p>
+<b>Download the result as an image file:</b> <a id="download_png">PNG format</a> or <a id="download_jpg">JPG format</a>
+</p>
 
 <h4>Advanced options</h4>
 <p>
@@ -202,8 +205,20 @@ function downloadCanvas(link, canvasId, filename) {
  * The event handler for the link's onclick event. We give THIS as a
  * parameter (=the link element), ID of the canvas and a filename.
 */
-document.getElementById('download').addEventListener('click', function() {
+document.getElementById('download_png').addEventListener('click', function() {
     downloadCanvas(this, 'canvas', 'itw_canvas.png');
+}, false);
+
+document.getElementById('download_jpg').addEventListener('click', function() {
+    downloadCanvas(this, 'canvas', 'itw_canvas.jpg');
+}, false);
+
+document.getElementById('download_png_top').addEventListener('click', function() {
+    downloadCanvas(this, 'canvas', 'itw_canvas.png');
+}, false);
+
+document.getElementById('download_jpg_top').addEventListener('click', function() {
+    downloadCanvas(this, 'canvas', 'itw_canvas.jpg');
 }, false);
 
   

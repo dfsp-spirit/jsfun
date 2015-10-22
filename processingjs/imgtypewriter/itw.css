@@ -55,6 +55,14 @@ a:link {
         text-decoration:none
 }
 
+a {
+        font-size:10pt;
+        line-height:20px;
+        font-family:Arial,sans-serif;
+        color:#800000;
+        text-decoration:none
+}
+
 p tinylink {font-size:7pt; color:#800000; text-decoration:none }
 
 a:visited { font-size:10pt; color:#800000; text-decoration:none;line-height:20px; }
