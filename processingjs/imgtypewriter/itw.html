@@ -132,8 +132,11 @@ Force image width: <input id="user_image_width" name="user_image_width" type="nu
 Force image height: <input id="user_image_height" name="user_image_height" type="number" min="0" max="400" step="10" value="0"> pixels (set to 0 for original height)<br/>
 <br/><br/>
 <b>Add writing lines</b><br/>
-Here you can have a writing line drawn under each line of images in the canvas.<br/>
-<input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines">Add writing lines below images<br/>
+Here you can have a writing line drawn under each line of images in the canvas. WARNING: This only works if all images have the same height -- which you can force above (see <i>Image scaling</i> option).<br/>
+<input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines">Add writing lines below images:
+<input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="1">lines in vertical distance
+<input id="user_writing_lines_dist" name="user_writing_lines_dist" type="number" min="1" max="100" step="1" value="10">pixels<br/>
+<br/>
 </p>
 
 <h3>Log</h3>
