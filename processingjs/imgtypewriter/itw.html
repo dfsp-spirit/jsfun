@@ -54,8 +54,8 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 
 <p>Select a character-to-image mapping preset:</p>
 <select name="mapping_preset_select" id="mapping_preset_select">
-  <option value="test" selected="selected">Echo -- Simple test with a monospaced font [1]</option>
-  <option value="anlaute">Anlaute non-free -- Character to Anlaut image [1]</option>
+  <option value="test" >Echo -- Simple test with a monospaced font [1]</option>
+  <option value="anlaute" selected="selected">Anlaute non-free -- Character to Anlaut image [1]</option>
   <option value="anlaute2">Anlaute GPL -- Character to Anlaut image [1]</option>
 <!--  
   <option value="amino1">(1) Amino acids -- One letter AA code to chemical structure</option> 
@@ -128,14 +128,16 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 <p>
 <b>Image scaling</b><br/>
 You can force a certain width and/or height for the images. A setting of 0 (zero, the default) uses the original image dimensions. It is recommended to specify only width <i>or</i> height, so that the image proportions are kept. If you specify both width and height, the image may get distorted (it will be distorted if the specified aspect ratio is different from the original image). WARNING: If you, at any point, specify a larger dimension than before, the images will get scaled up, which of course means they will become uglier.<br/>
-Force image width: <input id="user_image_width" name="user_image_width" type="number" min="0" max="400" step="10" value="0"> pixels (set to 0 for original width)<br/>
+Force image width: <input id="user_image_width" name="user_image_width" type="number" min="0" max="400" step="10" value="50"> pixels (set to 0 for original width)<br/>
 Force image height: <input id="user_image_height" name="user_image_height" type="number" min="0" max="400" step="10" value="0"> pixels (set to 0 for original height)<br/>
 <br/><br/>
 <b>Add writing lines</b><br/>
 Here you can have a writing line drawn under each line of images in the canvas. WARNING: This only works if all images have the same height -- which you can force above (see <i>Image scaling</i> option).<br/>
-<input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines">Add writing lines below images:
-<input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="1">lines in vertical distance
+<input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines" checked="checked">Add writing lines below images:
+<input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="3">lines in vertical distance
 <input id="user_writing_lines_dist" name="user_writing_lines_dist" type="number" min="1" max="100" step="1" value="10">pixels<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_left" id="checkbox_close_draw_lines_left" value="close_lines_left" checked="checked">Close line ends on the left (only makes sense with > 1 lines)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_right" id="checkbox_close_draw_lines_right" value="close_lines_right" checked="checked">Close line ends on the right (only makes sense with > 1 lines)
 <br/>
 </p>
 

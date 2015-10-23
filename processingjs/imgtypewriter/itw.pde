@@ -394,6 +394,7 @@ void keyReleased()
 //var numMappings = getObjectSize(mapping);
 
 
+
 void draw() {  
   doLog("***** Function draw called. *****");
   background(255, 255, 255);
@@ -403,6 +404,7 @@ void draw() {
   int lineStartX = 50;
   int lineHeight = 0; // will be adjusted based on height of largest image later
   int minimumLineHeight = 50;  // the minimal line height (also applies to height of empty lines). set to zero to ignore if the user presses RETURN in the input field.
+  int lastImageWidth = 0;   // y position of base writing line in the LAST line
   
   lineHeight = minimumLineHeight;
   
@@ -410,6 +412,7 @@ void draw() {
   int posY = 50;
   
   int lettersOnThisLine = 0;
+  int numLinesDrawn = 0;  // during this call to draw
 
 
   for (var x = 0; x < kmers.length; x++) {
@@ -429,6 +432,7 @@ void draw() {
     img = images[imgPos];
   
     if(img === undefined) {
+	  lastImageWidth = 0;
 	  if(logging >= 2) {
         doLog(" - At kmer number " + x + ", skipping it due to missing image for code '" + key + "'.");
 	  }
@@ -465,9 +469,31 @@ void draw() {
 	      }
 		  img.resize(userImageWidth, userImageHeight);
 		}
+		
+	   
+	    var nl = document.getElementById('user_num_writing_lines').value;          // number of lines
+	    var ld = document.getElementById('user_writing_lines_dist').value;         // line distance
+		strokeWeight(1); stroke(0);
 	   
 	    // do we have to start a new line?
 		if(posX + img.width > width) {
+		
+		  // yes, but we may need to close the drawing lines on this one first! Note though that the actual lines are the lines from the LAST image. They were already drawn in the last iteration
+		  // (but then we didn't know yet that it was the last image on the line -- because this depends on the width of the current image). So we have to add the
+		  // closing of the last lines now.
+		  if(drawWritingLinesInBetweenOtherLines) {
+		    doLog(" * Checking whether we need to close lines on the RIGHT...");
+		    if(document.getElementById('checkbox_close_draw_lines_right').checked && nl > 1) {  // only close of asked to, and there are more than 1 lines
+			  if(lettersOnThisLine > 0) {      // no need to close lines if there aren't chars, and thus no lines
+			    if(lastImageWidth > 0) {
+				  doLog(" * Close lines on the RIGHT...YES");
+				  int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
+				  line(posX - lastImageWidth, firstLineYPos, posX - lastImageWidth, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+				}
+			  }
+			}	        
+		  }
+		  
 		  posX = lineStartX;
 		  posY = posY + lineHeight;
 		  if(drawWritingLinesInBetweenOtherLines) {
@@ -486,25 +512,37 @@ void draw() {
         image(img, posX, posY);
 	if(drawWritingLinesInBetweenOtherLines) {
 	  doLog(" * Drawing the writing line below image.");
-	  strokeWeight(1); stroke(0);	  
-	  var nl = document.getElementById('user_num_writing_lines').value;
-	  var ld = document.getElementById('user_writing_lines_dist').value;
 	  if(nl > 0) {
+	    int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
 	    for(int l = 0; l < nl; l++) {
-	      int yLinePos = posY + lineHeight + (lineHeight / 2) - (l * ld);
+	      int yLinePos = firstLineYPos - (l * ld);
 	      line(posX, yLinePos, posX + img.width, yLinePos);
 	    }
+		
+		// we may need to close lines
+		if(document.getElementById('checkbox_close_draw_lines_left').checked && nl > 1) {
+		  // close the first line element in a line ON THE LEFT
+		  if(lettersOnThisLine == 0) {
+		    line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+		  }
+		  // close the one on the last line -- if any -- on the right
+		}
 	  }
 	}
         posX += img.width;
-        posY += 0;
+		lastImageWidth = img.width;
+        posY += 0;	// no need to change y pos here, new lines have already been handled
 		lettersOnThisLine++;
-        doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + ", height is " + img.height + " pixels. Line has " + lettersOnThisLine + " images so far.");
+        doLog(" -- Image drawn, moved canvas position to " + posX + ", " + posY + ". Image width is " + img.width + ", height is " + img.height + " pixels. Line has " + lettersOnThisLine + " images so far.");		
       }
       else {
         doLog(" -- Image skipped, width was zero.");
-      }
+		lastImageWidth = 0;
+      }	  
     }
+	// keep track of the width for closing lines next iteration (if needed)	
+	doLog(" * Saved image width of " + lastImageWidth + " for next iteration.");
+	numLinesDrawn++;
   }
 
   // /* @pjs preload="mappings/test/A.png"; */
