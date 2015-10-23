@@ -405,6 +405,9 @@ void draw() {
   int lineHeight = 0; // will be adjusted based on height of largest image later
   int minimumLineHeight = 50;  // the minimal line height (also applies to height of empty lines). set to zero to ignore if the user presses RETURN in the input field.
   int lastImageWidth = 0;   // y position of base writing line in the LAST line
+  drawWritingLinesInBetweenOtherLines = document.getElementById('checkbox_draw_lines').checked;
+  var nl = document.getElementById('user_num_writing_lines').value;          // number of lines
+  var ld = document.getElementById('user_writing_lines_dist').value;         // line distance
   
   lineHeight = minimumLineHeight;
   
@@ -420,6 +423,26 @@ void draw() {
 	
 	// special handling of newline characters: add a new line, ignore the rest of the kmer (note that newlines have been extended to the length of k before, by adding spaces if k > 1)
 	if(key[0] == "\n") {
+	
+	  // yes, but we may need to close the drawing lines on this one first! Note though that the actual lines are the lines from the LAST image. They were already drawn in the last iteration
+		  // (but then we didn't know yet that it was the last image on the line -- because this depends on the width of the current image). So we have to add the
+		  // closing of the last lines now.
+		  if(drawWritingLinesInBetweenOtherLines) {
+		    doLog(" * #########Manual line break: Checking whether we need to close lines on the RIGHT...############");
+		    if(document.getElementById('checkbox_close_draw_lines_right').checked && nl > 1) {  // only close of asked to, and there are more than 1 lines
+			  if(lettersOnThisLine > 0) {      // no need to close lines if there aren't chars, and thus no lines
+			    //if(lastImageWidth > 0) {
+				  doLog(" * Manual line break: Close lines on the RIGHT...YES");
+				  int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
+				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+				//}
+				//else {
+				//  doLog(" * Manual line break: Close lines on the RIGHT...NO (lastImageWidth = " + lastImageWidth + ".)");
+				//}
+			  }
+			}	        
+		  }
+	  
 	  posX = lineStartX;
 	  posY = posY + lineHeight;
 	  if(drawWritingLinesInBetweenOtherLines) {
@@ -471,8 +494,7 @@ void draw() {
 		}
 		
 	   
-	    var nl = document.getElementById('user_num_writing_lines').value;          // number of lines
-	    var ld = document.getElementById('user_writing_lines_dist').value;         // line distance
+	    
 		strokeWeight(1); stroke(0);
 	   
 	    // do we have to start a new line?
@@ -488,7 +510,7 @@ void draw() {
 			    if(lastImageWidth > 0) {
 				  doLog(" * Close lines on the RIGHT...YES");
 				  int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
-				  line(posX - lastImageWidth, firstLineYPos, posX - lastImageWidth, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
 				}
 			  }
 			}	        
