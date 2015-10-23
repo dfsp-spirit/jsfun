@@ -41,7 +41,9 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 </p>
 
 <form>
-<h3>Character to Image mapping</h3>
+<fieldset>
+<legend>Character to Image mapping</legend>
+<h3></h3>
 
 <!--
 <input type="radio" name="mapping_type" value="preset" checked>Select from presets
@@ -97,8 +99,11 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
     <br>
 </fieldset>
 -->
+</fieldset>
 
-<h3>Your text</h3>
+<h3></h3>
+<fieldset>
+<legend>Your text</legend>
 <p>Enter the text you want converted to an image, according to the mapping table defined above. Characters which do not appear in the mapping table (see above) will be skipped.</p>
 <textarea id="usertext" name="usertext" rows="10" cols="30">
 Die Katze schläft zu lange und viel zu fest.
@@ -107,9 +112,11 @@ Vera mag Kekse.
 Und Uli auch.
 </textarea>
 </form>
+</fieldset>
 
-
-<h3>Result</h3>
+<fieldset>
+<legend>Result</legend>
+<h3></h3>
 <p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. My suggestion is to make it fit on your entire screen. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/><br/>
 Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
@@ -123,8 +130,12 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 <p>
 <b>Download the result as an image file:</b> <a id="download_png">PNG format</a> or <a id="download_jpg">JPG format</a>
 </p>
+</fieldset>
 
-<h4>Advanced options</h4>
+<div id="advanced_options">
+<h4></h4>
+<fieldset>
+<legend>Advanced options</legend>
 <p>
 <b>Image scaling</b><br/>
 You can force a certain width and/or height for the images. A setting of 0 (zero, the default) uses the original image dimensions. It is recommended to specify only width <i>or</i> height, so that the image proportions are kept. If you specify both width and height, the image may get distorted (it will be distorted if the specified aspect ratio is different from the original image). WARNING: If you, at any point, specify a larger dimension than before, the images will get scaled up, which of course means they will become uglier.<br/>
@@ -140,6 +151,8 @@ Here you can have a writing line drawn under each line of images in the canvas. 
 &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_right" id="checkbox_close_draw_lines_right" value="close_lines_right" checked="checked">Close line ends on the right (only makes sense with > 1 lines)
 <br/>
 </p>
+</fieldset>
+</div>
 
 <h3>Log</h3>
 <p>This is the application log, intended for the developer only. If stuff went wrong when you tried to use this app, write me an email explaining what went wrong and include this log: just copy and paste it into the email, below your description of the problem. I know that reporting a problem via email is work for you, and I promise I will respond to your email and try to fix the problem. Keep in mind though that it's also work for me to fix it. ;)</p>
