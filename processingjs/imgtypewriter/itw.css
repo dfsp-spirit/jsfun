@@ -1,10 +1,17 @@
+html, body, form, fieldset, table, tr, td, img {
+    font-size:10pt; font-family:Arial,sans-serif;color:black;line-height:20px;
+}
+
 body {
         background-color: white;
         margin-top: 50px;
         margin-bottom: 50px;
         margin-right: 100px;
         margin-left: 100px;
+	font-size:10pt; font-family:Arial,sans-serif;color:black;line-height:20px;
 }
+
+
 
 .hidden>div {
     display:none;
@@ -26,6 +33,19 @@ p.warn { font-size:10pt; font-family:monospace; color:red;line-height:20px; }
 p.top { font-size:10pt; font-family:Arial,sans-serif; color:black; text-decoration:underline }
 p.big { font-size:14pt; font-family:Arial,sans-serif; color:black }
 p.tiny { font-size:7pt; font-family:Arial,sans-serif; color:black }
+
+fieldset {
+  padding: 1em;
+  font:Arial,sans-serif;color:black;
+  }
+label {
+  float:left;
+  width:25%;
+  margin-right:0.5em;
+  padding-top:0.2em;
+  text-align:right;
+  font-weight:bold;
+  }
 
 h1 { font-size: 14pt; font-family:Arial,sans-serif; text-align: left; color:black }
 h2 { font-size: 14pt; font-family:Arial,sans-serif; text-align: left; color:black }

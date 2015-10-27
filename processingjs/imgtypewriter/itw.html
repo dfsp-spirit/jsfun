@@ -33,6 +33,7 @@ table, th, td {
 </head>
 <body>
 <h1>ITW -- ImageTypeWriter</h1>
+<h4>About</h4>
 <p>
 This is a program which lets you type using images instead of characters. You can also think of it as a software which replaces each character in a text by an image representing (in whatever way) that character in the output. You can define a custom mapping of characters to images, or use one of the mappings we provide. The program can be used for various problems, look at our predefined mappings below to get some ideas.
 </p>
@@ -66,6 +67,8 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
   <option value="amino3">(3) Amino acids -- Three letter AA code to chemical structure</option>  
   -->
 </select>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span id="mapping_description"></span>
 
 <br/><br/>
 
@@ -101,6 +104,8 @@ ImageTypeWriter was written by Tim 'spirit' Schäfer, and it is powered by JavaS
 -->
 </fieldset>
 
+<br/><br/>
+
 <h3></h3>
 <fieldset>
 <legend>Your text</legend>
@@ -114,12 +119,14 @@ Und Uli auch.
 </form>
 </fieldset>
 
+<br/><br/>
+
 <fieldset>
 <legend>Result</legend>
 <h3></h3>
 <p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. My suggestion is to make it fit on your entire screen. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/><br/>
-Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600"> pixels<br/><br/>
+Canvas width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600" style="width: 50px;"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Canvas height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600" style="width: 50px;"> pixels<br/><br/>
 Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change.</p>
 <p>
 <b>Download the result as an image file:</b> <a id="download_png_top">PNG format</a> or <a id="download_jpg_top">JPG format</a>
@@ -139,14 +146,14 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 <p>
 <b>Image scaling</b><br/>
 You can force a certain width and/or height for the images. A setting of 0 (zero, the default) uses the original image dimensions. It is recommended to specify only width <i>or</i> height, so that the image proportions are kept. If you specify both width and height, the image may get distorted (it will be distorted if the specified aspect ratio is different from the original image). WARNING: If you, at any point, specify a larger dimension than before, the images will get scaled up, which of course means they will become uglier.<br/>
-Force image width: <input id="user_image_width" name="user_image_width" type="number" min="0" max="400" step="10" value="50"> pixels (set to 0 for original width)<br/>
-Force image height: <input id="user_image_height" name="user_image_height" type="number" min="0" max="400" step="10" value="0"> pixels (set to 0 for original height)<br/>
+Force image width: <input id="user_image_width" name="user_image_width" type="number" min="0" max="400" step="10" value="50" style="width: 50px;"> pixels (set to 0 for original width)<br/>
+Force image height: <input id="user_image_height" name="user_image_height" type="number" min="0" max="400" step="10" value="0" style="width: 50px;"> pixels (set to 0 for original height)<br/>
 <br/><br/>
 <b>Add writing lines</b><br/>
 Here you can have a writing line drawn under each line of images in the canvas. WARNING: This only works if all images have the same height -- which you can force above (see <i>Image scaling</i> option).<br/>
 <input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines" checked="checked">Add writing lines below images:
-<input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="3">lines in vertical distance
-<input id="user_writing_lines_dist" name="user_writing_lines_dist" type="number" min="1" max="100" step="1" value="10">pixels<br/>
+<input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="3" style="width: 50px;">lines in vertical distance
+<input id="user_writing_lines_dist" name="user_writing_lines_dist" type="number" min="1" max="100" step="1" value="10" style="width: 50px;">pixels<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_left" id="checkbox_close_draw_lines_left" value="close_lines_left" checked="checked">Close line ends on the left (only makes sense with > 1 lines)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_right" id="checkbox_close_draw_lines_right" value="close_lines_right" checked="checked">Close line ends on the right (only makes sense with > 1 lines)
 <br/>
@@ -512,11 +519,23 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
     // Use the mapping selected in the box. Note that we need to reload this when the selection in the box changes.
     var selMapU = document.getElementById("mapping_preset_select");
     var selectedMapping = selMapU.options[selMapU.selectedIndex].value;
-  
-    mapping = mapping_test; // default mapping
-    if(selectedMapping == "anlaute") { mapping = mapping_anlaute; }
-    else if(selectedMapping == "anlaute2") { mapping = mapping_anlaute2; }
-	else { mapping = mapping_test; }
+    var mappingDescriptionText;
+      
+    if(selectedMapping == "anlaute") { 
+      mapping = mapping_anlaute; 
+      mappingDescriptionText = "German Anlaute. For elementary school teachers, used to teach children letters and reading. Images are non-free, will be removed here before this software is published.";      
+    }
+    else if(selectedMapping == "anlaute2") { 
+      mapping = mapping_anlaute2;      
+      mappingDescriptionText = "German Anlaute. For elementary school teachers, used to teach children letters and reading. Images from Wikimedia Commons, used here under GPL. Original versions by Wolfram Eßer.";
+    }
+    else { 
+      mapping = mapping_test;
+      mappingDescriptionText = "A test mapping displaying screenshots of the entered characters themselves in the free <i>Liberation Mono</i> font. Pretty useless and ugly.";
+    }
+    
+    var descr = document.getElementById("mapping_description");
+    descr.innerHTML = mappingDescriptionText;
 	
     var table = document.getElementById("table_mapping_preset");
   
