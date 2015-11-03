@@ -15,7 +15,21 @@
 function updateCanvasWidthFromUserSettings() {
   var user_width = document.getElementById('user_canvas_width').value;
   var user_height = document.getElementById('user_canvas_height').value;
-  size(user_width, user_height);
+  var act_width; var act_height;
+  if(document.canvas_size_radio_buttons.canvas_radio[0].checked) {
+    act_width = 1188;
+	act_height = 840;
+  }
+  else if(document.canvas_size_radio_buttons.canvas_radio[1].checked) {
+    act_width = 840;
+	act_height = 1188;
+  }
+  else {
+    act_width = user_width;
+	act_height = user_height;
+  }
+  
+  size(act_width, act_height);
 }
 
 updateCanvasWidthFromUserSettings();
@@ -327,13 +341,13 @@ void init() {
   for (var key in mapping) {
     img = requestImage(mapping[key]);  
   
-    useless = 0;
-    while(img.width == 0) {
-      useless++;
-      if(useless > 10000) {
-        break;
-      } 
-    }
+    //useless = 0;
+    //while(img.width == 0) {
+    //  useless++;
+    //  if(useless > 10000) {
+    //    break;
+    //  } 
+    //}
 
     img.loadPixels();
     images[i] = img;
