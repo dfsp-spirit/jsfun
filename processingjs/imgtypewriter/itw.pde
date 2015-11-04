@@ -481,8 +481,8 @@ void draw() {
 			  if(lettersOnThisLine > 0) {      // no need to close lines if there aren't chars, and thus no lines
 			    //if(lastImageWidth > 0) {
 				  doLog(" * Manual line break: Close lines on the RIGHT...YES");
-				  int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
-				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+				  int firstLineYPos =  posY + lineHeight + (writingLineHeight-1);
+				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very right
 				//}
 				//else {
 				//  doLog(" * Manual line break: Close lines on the RIGHT...NO (lastImageWidth = " + lastImageWidth + ".)");
@@ -558,8 +558,8 @@ void draw() {
 			  if(lettersOnThisLine > 0) {      // no need to close lines if there aren't chars, and thus no lines
 			    if(lastImageWidth > 0) {
 				  doLog(" * Close lines on the RIGHT...YES");
-				  int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
-				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very left
+				  int firstLineYPos =  posY + lineHeight + (writingLineHeight-1);
+				  line(posX, firstLineYPos, posX, firstLineYPos - ((nl - 1) * ld)); // draw a line upwards from the start of the first line, on the very right
 				}
 			  }
 			}	        
@@ -567,7 +567,7 @@ void draw() {
 		  
 		  posX = lineStartX;
 		  posY = posY + lineHeight;
-		  if(drawWritingLinesInBetweenOtherLines) {
+		  if(drawWritingLinesInBetweenOtherLines && lettersOnThisLine > 0) {
 		    posY = posY + writingLineHeight;
 		  }
 		  
@@ -584,7 +584,7 @@ void draw() {
 	if(drawWritingLinesInBetweenOtherLines) {
 	  doLog(" * Drawing the writing line below image.");
 	  if(nl > 0) {
-	    int firstLineYPos =  posY + lineHeight + (lineHeight / 2);
+	    int firstLineYPos =  posY + lineHeight + (writingLineHeight-1);
 	    for(int l = 0; l < nl; l++) {
 	      int yLinePos = firstLineYPos - (l * ld);
 	      line(posX, yLinePos, posX + img.width, yLinePos);
