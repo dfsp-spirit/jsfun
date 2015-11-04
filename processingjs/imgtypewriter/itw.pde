@@ -421,7 +421,7 @@ void draw() {
   reloadUserText();
   reloadAdvancedSettings();
   
-  int lineStartX = 50;
+  int lineStartX = 10;
   int lineHeight = 0; // line height of the image lines. will be adjusted based on height of largest image later.
   int lineHeightWritingLine = 0;
   int minimumLineHeight = 50;  // the minimal line height (also applies to height of empty lines). set to zero to ignore if the user presses RETURN in the input field.
@@ -436,13 +436,13 @@ void draw() {
     // try to suggest a line height that fits for A4 vertical or horizontal format, if one of these is selected
     if(act_page_size == "a4v") { // line height was measured and should be 1.8 cm, this is roughly 9 % of vertical A4 page
       totalLineHeight = act_height * 0.09;
-      doLog("Auto line height selected for A4 vertical. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+      doLog("Auto writing line height selected for A4 vertical. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
     } else if(act_page_size == "a4h") {  // line height was measured and should be 1.8 cm, this is roughly 6 % of horizontal A4 page
       totalLineHeight = act_height * 0.06;
-      doLog("Auto line height selected for A4 horizontal. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+      doLog("Auto writing line height selected for A4 horizontal. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
     } else {
       totalLineHeight = act_height * 0.10; // suggest 10 % for custom page. most likely it will be smaller than A4. wild guessing only ofc, user needs to change this.
-      doLog("Auto line height selected for custom format. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+      doLog("Auto writing line height selected for custom format. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
     }
     
     // now compute the distance between the 4 lines based on the total line height
@@ -454,8 +454,10 @@ void draw() {
     totalLineHeight = ld * ld;
   }
   
+  
   lineHeight = minimumLineHeight;
   var writingLineHeight = totalLineHeight;
+  doLog("Writing line height is set to " + writingLineHeight + " px. Lines (nl) = " + nl + ", distance (ld) = " + ld + ".");
   
   int posX = lineStartX;
   int posY = 50;
@@ -491,8 +493,9 @@ void draw() {
 	  
 	  posX = lineStartX;
 	  posY = posY + lineHeight;
-	  if(drawWritingLinesInBetweenOtherLines) {
-		    posY = posY + lineHeight;
+	  if(drawWritingLinesInBetweenOtherLines && lettersOnThisLine > 0) {
+	    // add space for a writing line -- but only if there were any letters to write on this line
+		    posY = posY + writingLineHeight;
 		  }
       lettersOnThisLine = 0;
 	}
@@ -565,7 +568,7 @@ void draw() {
 		  posX = lineStartX;
 		  posY = posY + lineHeight;
 		  if(drawWritingLinesInBetweenOtherLines) {
-		    posY = posY + lineHeight;
+		    posY = posY + writingLineHeight;
 		  }
 		  
 		  
