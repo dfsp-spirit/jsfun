@@ -430,9 +430,10 @@ void draw() {
   var nl = 0; var ld;
   
   // check writing lines and suggest a height for them (only possible for known output size of images, e.g., DIN A4 horizontal)
+  var totalLineHeight = 0;
   if(document.writing_lines_radio_buttons.lines_radio[0].checked) { // auto
     nl = 4;
-    var totalLineHeight;	// try to suggest a line height that fits for A4 vertical or horizontal format, if one of these is selected
+    // try to suggest a line height that fits for A4 vertical or horizontal format, if one of these is selected
     if(act_page_size == "a4v") { // line height was measured and should be 1.8 cm, this is roughly 9 % of vertical A4 page
       totalLineHeight = act_height * 0.09;
       doLog("Auto line height selected for A4 vertical. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
@@ -450,9 +451,11 @@ void draw() {
   else if(document.writing_lines_radio_buttons.lines_radio[1].checked) { // user custom settings
     nl = document.getElementById('user_num_writing_lines').value;          // number of lines
     ld = document.getElementById('user_writing_lines_dist').value;         // line distance
+    totalLineHeight = ld * ld;
   }
   
   lineHeight = minimumLineHeight;
+  var writingLineHeight = totalLineHeight;
   
   int posX = lineStartX;
   int posY = 50;
