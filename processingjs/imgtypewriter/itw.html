@@ -164,10 +164,14 @@ Here you can have a writing line drawn under each line of images in the canvas. 
 <!-- Empfohlene Höhe ist: eine Zeile soll 6,06% der Blatthöhe sein (bei Hochformat), denn eine Zeile ist 1,8 cm hoch und das Papier ist 29,7 cm hoch (DIN A4 Format = 21 cm x 29,7 cm).  -->
 
 <input type="checkbox" name="checkbox_draw_lines" id="checkbox_draw_lines" value="add_lines" checked="checked">Add writing lines below images:
+<form id="writing_lines_radio_buttons" name="writing_lines_radio_buttons">
+&nbsp;&nbsp;<input type="radio" name="lines_radio" id="auto" value="auto" checked>Automatic (based on image size)<br>
+&nbsp;&nbsp;<input type="radio" name="lines_radio" id="custom" value="custom">Custom setting:
 <input id="user_num_writing_lines" name="user_num_writing_lines" type="number" min="1" max="5" step="1" value="4" style="width: 50px;">lines in vertical distance
 <input id="user_writing_lines_dist" name="user_writing_lines_dist" type="number" min="1" max="100" step="1" value="8" style="width: 50px;">pixels<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_left" id="checkbox_close_draw_lines_left" value="close_lines_left" checked="checked">Close line ends on the left (only makes sense with > 1 lines)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_right" id="checkbox_close_draw_lines_right" value="close_lines_right" checked="checked">Close line ends on the right (only makes sense with > 1 lines)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_left" id="checkbox_close_draw_lines_left" value="close_lines_left" checked="checked">Close line ends on the left (only makes sense with > 1 lines)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="checkbox_close_draw_lines_right" id="checkbox_close_draw_lines_right" value="close_lines_right" checked="checked">Close line ends on the right (only makes sense with > 1 lines)
+</form>
 <br/>
 </p>
 </fieldset>
