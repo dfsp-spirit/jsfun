@@ -461,6 +461,7 @@ void draw() {
   
   int posX = lineStartX;
   int posY = 50;
+  int lineSpacerHorizontal = 50;    // a spacer between a writing line and next image line, otherwise it looks very crowded
   
   int lettersOnThisLine = 0;
   int numLinesDrawn = 0;  // during this call to draw
@@ -492,7 +493,7 @@ void draw() {
 		  }
 	  
 	  posX = lineStartX;
-	  posY = posY + lineHeight;
+	  posY = posY + lineHeight + lineSpacerHorizontal;
 	  if(drawWritingLinesInBetweenOtherLines && lettersOnThisLine > 0) {
 	    // add space for a writing line -- but only if there were any letters to write on this line
 		    posY = posY + writingLineHeight;
@@ -566,7 +567,7 @@ void draw() {
 		  }
 		  
 		  posX = lineStartX;
-		  posY = posY + lineHeight;
+		  posY = posY + lineHeight + lineSpacerHorizontal;
 		  if(drawWritingLinesInBetweenOtherLines && lettersOnThisLine > 0) {
 		    posY = posY + writingLineHeight;
 		  }
