@@ -124,27 +124,15 @@ Und Uli auch.
 <fieldset>
 <legend>Result</legend>
 <h3></h3>
-<p>The resulting image is displayed on the canvas below. You can adapt the canvas size to your needs here. My suggestion is to make it fit on your entire screen. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/><br/>
-
-Canvas width and height:<br>
-<form id="canvas_size_radio_buttons" name="canvas_size_radio_buttons">
-<input type="radio" name="canvas_radio" id="a4h" value="a4h">Recommended settings for DIN A4 horizontal (1188 * 840 pixels)<br>
-<input type="radio" name="canvas_radio" id="a4v" value="a4v" checked>Recommended settings for DIN A4 vertical (840 * 1188 pixels)<br>
-<input type="radio" name="canvas_radio" id="custom" value="custom">Custom setting:
-width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600" style="width: 50px;"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600" style="width: 50px;"> pixels<br/>
-</form>
-
-<br/>
-Click the canvas to update it, e.g. when you changed the text in the box above or when you want the canvas size to change.</p>
+<p>The resulting image is displayed on the canvas below.</p>
 <p>
-<b>Download the result as an image file:</b> <a id="download_png_top">PNG format</a> or <a id="download_jpg_top">JPG format</a>
+<b>Download the result as an image file</b> (e.g., to import into an empty Word document for printing): <a id="download_png_top">PNG format</a> or <a id="download_jpg_top">JPG format</a>
 </p>
 
 <canvas id="canvas" data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
 
 <p>
-<b>Download the result as an image file:</b> <a id="download_png">PNG format</a> or <a id="download_jpg">JPG format</a>
+<b>Download the result as an image file</b> (e.g., to import into an empty Word document for printing): <a id="download_png">PNG format</a> or <a id="download_jpg">JPG format</a>
 </p>
 </fieldset>
 
@@ -152,7 +140,19 @@ Click the canvas to update it, e.g. when you changed the text in the box above o
 <h4></h4>
 <fieldset>
 <legend>Advanced options</legend>
-<p>
+<p>These are advanced options you can use to adapt the output image to your needs. After you change any settings here, you have to click the canvas to update it.<br/><br/>
+
+<b>Canvas width and height</b><br>
+You can adapt the canvas size to your needs here. If you want to print this later, use the presets. If not, choose whatever you like. (You can also make it larger than your screen, so that you will have to scroll. Note that the maximum size possible depends on your browser. With modern browsers, something around 10,000 x 10,000 pixels should be possible.)<br/>
+<form id="canvas_size_radio_buttons" name="canvas_size_radio_buttons">
+<input type="radio" name="canvas_radio" id="a4h" value="a4h">Recommended settings for DIN A4 horizontal (1188 * 840 pixels)<br>
+<input type="radio" name="canvas_radio" id="a4v" value="a4v" checked>Recommended settings for DIN A4 vertical (840 * 1188 pixels)<br>
+<input type="radio" name="canvas_radio" id="custom" value="custom">Custom setting:
+width: <input id="user_canvas_width" name="user_canvas_width" type="number" min="100" max="20000" step="100" value="1600" style="width: 50px;"> pixels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+height: <input id="user_canvas_height" name="user_canvas_height" type="number" min="100" max="20000" step="100" value="600" style="width: 50px;"> pixels<br/>
+</form>
+<br/>
+
 <b>Image scaling</b><br/>
 You can force a certain width and/or height for the images. A setting of 0 (zero, the default) uses the original image dimensions. It is recommended to specify only width <i>or</i> height, so that the image proportions are kept. If you specify both width and height, the image may get distorted (it will be distorted if the specified aspect ratio is different from the original image). WARNING: If you, at any point, specify a larger dimension than before, the images will get scaled up, which of course means they will become uglier.<br/>
 Force image width: <input id="user_image_width" name="user_image_width" type="number" min="0" max="400" step="10" value="50" style="width: 50px;"> pixels (set to 0 for original width)<br/>

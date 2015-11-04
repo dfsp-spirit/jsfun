@@ -11,22 +11,27 @@
 //int width = 1600;
 //int height = 1600;
 //size(width, height);
+var act_width; var act_height;
+var act_page_size = "custom";
 
 function updateCanvasWidthFromUserSettings() {
   var user_width = document.getElementById('user_canvas_width').value;
   var user_height = document.getElementById('user_canvas_height').value;
-  var act_width; var act_height;
+  
   if(document.canvas_size_radio_buttons.canvas_radio[0].checked) {
+    act_page_size = "a4h";
     act_width = 1188;
-	act_height = 840;
+    act_height = 840;
   }
   else if(document.canvas_size_radio_buttons.canvas_radio[1].checked) {
+    act_page_size = "a4v";
     act_width = 840;
-	act_height = 1188;
+    act_height = 1188;
   }
   else {
+    act_page_size = "custom";
     act_width = user_width;
-	act_height = user_height;
+    act_height = user_height;
   }
   
   size(act_width, act_height);
@@ -89,6 +94,7 @@ PImage img;
 var userImageWidth = 0;
 var userImageHeight = 0;
 var drawWritingLinesInBetweenOtherLines = "";
+
 
 void setup() {
   doLog("Function setup called.");
@@ -416,12 +422,35 @@ void draw() {
   reloadAdvancedSettings();
   
   int lineStartX = 50;
-  int lineHeight = 0; // will be adjusted based on height of largest image later
+  int lineHeight = 0; // line height of the image lines. will be adjusted based on height of largest image later.
+  int lineHeightWritingLine = 0;
   int minimumLineHeight = 50;  // the minimal line height (also applies to height of empty lines). set to zero to ignore if the user presses RETURN in the input field.
   int lastImageWidth = 0;   // y position of base writing line in the LAST line
   drawWritingLinesInBetweenOtherLines = document.getElementById('checkbox_draw_lines').checked;
-  var nl = document.getElementById('user_num_writing_lines').value;          // number of lines
-  var ld = document.getElementById('user_writing_lines_dist').value;         // line distance
+  var nl = 0; var ld;
+  
+  // check writing lines and suggest a height for them (only possible for known output size of images, e.g., DIN A4 horizontal)
+  if(document.writing_lines_radio_buttons.lines_radio[0].checked) { // auto
+    nl = 4;
+    var totalLineHeight;	// try to suggest a line height that fits for A4 vertical or horizontal format, if one of these is selected
+    if(act_page_size == "a4v") { // line height was measured and should be 1.8 cm, this is roughly 9 % of vertical A4 page
+      totalLineHeight = act_height * 0.09;
+      doLog("Auto line height selected for A4 vertical. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+    } else if(act_page_size == "a4h") {  // line height was measured and should be 1.8 cm, this is roughly 6 % of horizontal A4 page
+      totalLineHeight = act_height * 0.06;
+      doLog("Auto line height selected for A4 horizontal. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+    } else {
+      totalLineHeight = act_height * 0.10; // suggest 10 % for custom page. most likely it will be smaller than A4. wild guessing only ofc, user needs to change this.
+      doLog("Auto line height selected for custom format. Page height = " + act_height + " px, line height = " + totalLineHeight + " px.");
+    }
+    
+    // now compute the distance between the 4 lines based on the total line height
+    ld = totalLineHeight / 3;
+  }
+  else if(document.writing_lines_radio_buttons.lines_radio[1].checked) { // user custom settings
+    nl = document.getElementById('user_num_writing_lines').value;          // number of lines
+    ld = document.getElementById('user_writing_lines_dist').value;         // line distance
+  }
   
   lineHeight = minimumLineHeight;
   
