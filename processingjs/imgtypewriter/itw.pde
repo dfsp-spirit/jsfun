@@ -194,6 +194,7 @@ void init() {
                  "A" : "mappings/anlaute/Ameise.jpg",
 				 "a" : "mappings/anlaute/Apfel.jpg",
 				 "Ä" : "mappings/anlaute/Aepfel.jpg",
+				 "ä" : "mappings/anlaute/Aepfel.jpg",
 				 "2" : "mappings/anlaute/Auto.jpg",
 				 "B" : "mappings/anlaute/Banane.jpg",
 				 "b" : "mappings/anlaute/Banane.jpg",
