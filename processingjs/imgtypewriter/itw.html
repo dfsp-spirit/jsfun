@@ -117,6 +117,10 @@ vEra mag KEkSe.
 Und UlI 2h.
 </textarea>
 </form>
+
+<table id="table_mapping_keyboard" style="width:100%">
+</table>
+
 </fieldset>
 
 <br/><br/>
@@ -129,7 +133,7 @@ Und UlI 2h.
 <b>Download the result as an image file</b> (e.g., to import into an empty Word document for printing): <a id="download_png_top">PNG format</a> or <a id="download_jpg_top">JPG format</a>
 </p>
 
-<canvas id="canvas" data-processing-sources="itw.pde" style="border: 1px solid black;">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
+<canvas id="canvas" data-processing-sources="itw.pde" style="border: 1px solid rgb(200, 200, 200);">Your browser does NOT support HTML5 canvas. Please update it.</canvas>
 
 <p>
 <b>Download the result as an image file</b> (e.g., to import into an empty Word document for printing): <a id="download_png">PNG format</a> or <a id="download_jpg">JPG format</a>
@@ -245,6 +249,13 @@ Here you can have a writing line drawn under each line of images in the canvas. 
 function downloadCanvas(link, canvasId, filename) {
     link.href = document.getElementById(canvasId).toDataURL();
     link.download = filename;
+}
+
+function doLogJS(msg) {
+    var el = document.getElementById('log');
+    var elContent = el.innerHTML;
+    el.innerHTML = elContent + msg + "<br />\n";
+
 }
 
 /** 
@@ -526,6 +537,15 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
 				 };
 
   
+  function arrayUniqueValues(inarray) {
+    var n = []; 
+	for(var i = 0; i < inarray.length; i++) 
+	{
+		if (n.indexOf(this[i]) == -1) n.push(this[i]);
+	}
+	return n;
+  }
+  
   function updateActiveMapping() {
     // Use the mapping selected in the box. Note that we need to reload this when the selection in the box changes.
     var selMapU = document.getElementById("mapping_preset_select");
@@ -548,6 +568,7 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
     var descr = document.getElementById("mapping_description");
     descr.innerHTML = mappingDescriptionText;
 	
+	// fill the large mapping preview table which shows all info, including file paths
     var table = document.getElementById("table_mapping_preset");
   
     for(var key in mapping) {
@@ -565,6 +586,37 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
       cell2.innerHTML = filename;
       cell3.innerHTML = "<img src='" + filename + "' alt='WARNING: Could not load image file.'/>";
     }
+	
+	// fill the small table that should be used as an image keyboard later
+	var table_keyboard = document.getElementById("table_mapping_keyboard");
+	
+	var img_char_map = {};  // this map is the other way around: the key is the image and the value is the character the image is mapped to. NOTE that each image only occurs once (even if multiple keys are mapped to it in the other table.)
+	for(var key in mapping) {
+      var filename = mapping[key];
+	  img_char_map[filename] = key;
+	}
+	
+	var max_images_per_row = 25;
+	var img_row_count = 0;
+	var tkrow_img = table_keyboard.insertRow(img_row_count);
+	//var tkrow_char = table_keyboard.insertRow(img_row_count + 1);
+	var cellcount_this_row = 0;
+	for(var imgfile in img_char_map) {
+	  if(cellcount_this_row >= max_images_per_row) {
+	    //img_row_count+=2;
+		img_row_count+=1;
+		tkrow_img = table_keyboard.insertRow(img_row_count);
+	    //tkrow_char = table_keyboard.insertRow(img_row_count + 1);
+		cellcount_this_row = 0;
+	  }
+	  var imgcell = tkrow_img.insertCell(cellcount_this_row);
+	  //var charcell = tkrow_char.insertCell(cellcount_this_row);
+	  imgcell.innerHTML = "<img src='" + imgfile + "' width='25' alt='WARNING: Could not load image file.'/>" + img_char_map[imgfile];
+	  //charcell.innerHTML = img_char_map[imgfile];
+	  //doLogJS("########### Added image '" + imgfile + "' to preview table.");
+	  cellcount_this_row++;
+	}
+	
   }
   
   var selMap = document.getElementById("mapping_preset_select");  

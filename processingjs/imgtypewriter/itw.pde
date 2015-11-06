@@ -45,7 +45,7 @@ font = loadFont("DINBold.ttf");
 textFont(font, 12); 
 
 // a global! omg!
-logging = 1;
+logging = 0;
 drawnFrames = 0;
 
 function splitStringAtInterval (string, interval) {

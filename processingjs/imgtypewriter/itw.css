@@ -116,3 +116,11 @@ div.CENTERTEXT
 {
         text-align: center;
 }
+
+#table_mapping_keyboard table, th, td {
+   padding:0; margin:0;
+}
+
+#table_mapping_keyboard {
+   border-collapse: collapse;
+}
