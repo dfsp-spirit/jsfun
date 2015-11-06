@@ -117,7 +117,8 @@ vEra mag KEkSe.
 Und UlI 2h.
 </textarea>
 </form>
-
+<br/>
+You can also click these thumbnail images to add the respective characters to your text:
 <table id="table_mapping_keyboard" style="width:100%">
 </table>
 
@@ -622,6 +623,17 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
 	  var t = document.createTextNode(keycode);
 	  imgcell.appendChild(t);
 	  // TODO: add event listener to image here (onlick) which adds text to text area!
+	  imgEle.addEventListener('click', function (e) {
+	     var source = e.target || e.srcElement;  // should be the image element
+		 var par =  $(e.target).parent();        // should be the table cell which contains image ele
+		 doLogJS("par is '" + par + "'.");
+		 //var textNode = par.childNodes[1];
+		 var text = $(par).contents().filter(function() {
+           return this.nodeType == 3;
+         }).text();
+		 doLogJS("text is '" + text + "'.");
+         document.getElementById("usertext").value += text;
+	  });
 	  
 	  cellcount_this_row++;
 	}
