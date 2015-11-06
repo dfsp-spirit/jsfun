@@ -611,9 +611,18 @@ document.getElementById('download_jpg_top').addEventListener('click', function()
 	  }
 	  var imgcell = tkrow_img.insertCell(cellcount_this_row);
 	  //var charcell = tkrow_char.insertCell(cellcount_this_row);
-	  imgcell.innerHTML = "<img src='" + imgfile + "' width='25' alt='WARNING: Could not load image file.'/>" + img_char_map[imgfile];
+	  //imgcell.innerHTML = "<img src='" + imgfile + "' width='25' alt='WARNING: Could not load image file.'/>" + img_char_map[imgfile];
 	  //charcell.innerHTML = img_char_map[imgfile];
 	  //doLogJS("########### Added image '" + imgfile + "' to preview table.");
+	  var keycode = img_char_map[imgfile];
+	  var imgEle = document.createElement('img');
+      imgEle.setAttribute('src', imgfile);
+	  imgEle.setAttribute('width', '25');
+      imgcell.appendChild(imgEle);
+	  var t = document.createTextNode(keycode);
+	  imgcell.appendChild(t);
+	  // TODO: add event listener to image here (onlick) which adds text to text area!
+	  
 	  cellcount_this_row++;
 	}
 	
