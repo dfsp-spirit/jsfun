@@ -15,7 +15,8 @@ int OBJ_YSPEED = 5;
 
 float MAX_SPEED = 6.0;
 float MIN_SPEED = -6.0;
-
+float MAX_SPEED_DRUNK = 8.0;
+float MIN_SPEED_DRUNK = -8.0;
 
 
 int fps = 25;  // frames per second
@@ -54,22 +55,25 @@ float[][] beers = new float[numBeers][6];
 boolean playerdead = false;
 int waitFramesOnDeath = fps * 3;
 int waitedFramesSinceDeath;
+
 boolean playerInvuln = false;	// player is invulnerable for a short time after dying
 int waitFramesInvuln = fps * 3;
 int waitedFramesInvuln = 0;
+
+boolean playerDrunk = false;	// player is drunk when picking up beer. gives speed and score boost for limited time.
+int waitFramesDrunk = fps * 3;
+int waitedFramesDrunk = 0;
+
 int playerBorderYBottom;
 boolean pressingmouse = false;
 
 // If user presses mouse...
 void mousePressed () {
-  // increase player thrust
     pressingmouse = true;
-    
-        
 }
+
 // If user releases mouse...
 void mouseReleased() {
-  // ..user is no-longer dragging
   pressingmouse = false;
 }
 
@@ -81,6 +85,7 @@ function resetPlayer() {
   player[OBJ_YSPEED] = 0;
   player[OBJ_XPOS] = width/2;
   player[OBJ_YPOS] = playerBorderYBottom - player[OBJ_HEIGHT];
+  playerDrunk = false;
 }
 
 function generateEnemies() {
@@ -99,7 +104,6 @@ function generateBeer() {
         beers[j][OBJ_WIDTH] = 20;
         beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]/2);
         beers[j][OBJ_YPOS] = random(0,height) - height/2;
-        beers[j][OBJ_WIDTH] = 20;
         beers[j][OBJ_HEIGHT] = 35;
         beers[j][OBJ_XSPEED] = 0;
         beers[j][OBJ_YSPEED] = random(3.5,7.0);
@@ -131,7 +135,7 @@ function playerKilled() {
   waitedFramesSinceDeath = 0;
 }
 
-// checks whether the 2 rectangular objects overlap (collison detection)
+// checks whether the 2 rectangular objects overlap (collision detection)
 function rectsOverlap(float[] rect1, float[] rect2) {
     if (rect1[OBJ_XPOS] < rect2[OBJ_XPOS] + rect2[OBJ_WIDTH] &&
         rect1[OBJ_XPOS] + rect1[OBJ_WIDTH] > rect2[OBJ_XPOS] &&
@@ -192,6 +196,16 @@ void draw() {
 	}
   }
   
+  // check whether we need to disable invulnerability again (some time after death)
+  if(playerDrunk) {
+    waitedFramesDrunk++;
+	if(waitedFramesDrunk > waitFramesDrunk) {
+	  playerDrunk = false;
+	  waitedFramesDrunk = 0;
+	  player[OBJ_WIDTH] = 30;
+	}
+  }
+  
   // draw lower borders / ground
   //fill(80, 80, 80, 255);
   //rect(0, playerBorderYBottom, width, 20);
@@ -200,10 +214,10 @@ void draw() {
   if(keyPressed) {
 
     if (key == 'a' || key == 'A') {
-      player[OBJ_XSPEED] = MIN_SPEED;
+      player[OBJ_XSPEED] = (playerDrunk ? MIN_SPEED_DRUNK : MIN_SPEED);
     }
     if (key == 'd' || key == 'D') {
-      player[OBJ_XSPEED] = MAX_SPEED;
+      player[OBJ_XSPEED] = (playerDrunk ? MAX_SPEED_DRUNK : MAX_SPEED);
     }
   } else {
       player[OBJ_XSPEED] = 0.0;
@@ -228,6 +242,9 @@ void draw() {
   fill(187, 64, 64, 255);	// default player color (when alive)
   if(playerdead) {
     fill(187, 128, 128, 220);	// make player very transparent and less red if currently dead
+  }
+  if(playerDrunk) {
+    fill(100, 100, 256, 255);	// make player more blue if drunk
   }
   if(playerInvuln) {
     fill(255, 255, 255, 100 + (millis() % 150));	// draw white shield around player if currently invulnerable (animation: flicker shield)
@@ -297,6 +314,9 @@ void draw() {
     
     if ( rectsOverlap(player, beers[j]))  {
         score += 500;
+		playerDrunk = true;
+		player[OBJ_WIDTH] = 10;	// player gets thinner and faster while drunk
+		waitedFramesDrunk = 0;
         beers[j][OBJ_YPOS] = -(beers[j][OBJ_HEIGHT] + random(20,50));
         beers[j][OBJ_XPOS] = random(0,width - beers[j][OBJ_WIDTH]);
     }	  	  
@@ -311,6 +331,9 @@ void draw() {
   text("Use the 'a' and 'd' keys to evade piss and catch beers.", 15, 30);
   
   score++;
+  if(playerDrunk) {
+	score++;	// double score per frame when drunk
+  }
   
   // print score in upper right corner
   fill(255, 255, 255, 255); // white
