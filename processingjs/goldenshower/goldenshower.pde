@@ -342,7 +342,30 @@ void draw() {
   }
   text("Score: " + score + " Highscore: " + maxScore + "", width/2, 15);
   
+  // draw the drunk-o-meter
+  noStroke();
+  drunkometerEmptyWidth = 5;
+  drunkometerWidth = drunkometerEmptyWidth;
+  if(playerDrunk) {
+    howDrunk = (waitFramesDrunk - waitedFramesDrunk);
+	if(howDrunk >= waitFramesDrunk/2.0) {
+		fill(0, 255, 0, 200);  // green
+	}
+	else {
+	fill(255, 70, 0, 200);  // orange
+	}
+	
+	drunkometerWidth = drunkometerWidth + howDrunk;
+	
+  }
+  else {
+	fill(255, 0, 0, 200);  // red
+  }
+  rect(width/2, playerBorderYBottom +5, drunkometerWidth, 4); // right part
+  rect(width/2 - drunkometerWidth, playerBorderYBottom +5, drunkometerWidth, 4); // left part
   
+    
+    
   
   if(score > maxScore) { maxScore = score; }
 }
