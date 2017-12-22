@@ -27,7 +27,12 @@ int BORDER_RIGHT = 1;
 int BORDER_BOTTOM = 2;
 int BORDER_LEFT = 3;
 
+int MODE_DRAW_RANDOM = 0;        // Draws lines of random length which never cross the borders
+int MODE_DRAW_TO_BORDERS = 1;    // Drawns lines that always end at the borders
+
+// Visual preferences
 int numLines = 400;
+int mode = MODE_DRAW_RANDOM;
 
 string bname(int c) {
    if(c == BORDER_TOP) {
@@ -42,6 +47,10 @@ string bname(int c) {
    else if(c == BORDER_RIGHT) {
        return "RIGHT";
    }
+}
+
+int border_is_horizontal(int c) {
+   return c;// % 2 == 0;
 }
 
 int redshift, greenshift, blueshift;
@@ -90,10 +99,13 @@ int get_border_clostest_to(int x, int y) {
 	}
 }
 
-int draw_border_but(int current) {
+int random_border_but(int current) {
+   doLog('nrand called');
    int newBorder = current;
    while(newBorder == current) {
+   doLog('while');
        newBorder = floor(rand(0, 4));
+	   doLog('new=' + newBorder);
    }
    return newBorder;
 }
@@ -124,7 +136,9 @@ for(int i = 0; i < numLines; i++) {
   // get border closest to new start point
   current_border = get_border_clostest_to(startx, starty);
   doLog('At iteration ' + i + ', current_border is ' + current_border + ".");
-  //next_border = draw_border_but(current_border);
+  next_border = random_border_but(current_border);
+  doLog('Got next border ' + next_border);
+  doLog('border_is_horizontal=' + border_is_horizontal(next_border));
   
   // ... and draw a new random end point
   endx = random(0, width);
