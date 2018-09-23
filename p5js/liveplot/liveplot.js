@@ -1,0 +1,127 @@
+var numDots = 5;   // number of lines or rows
+var numPositionsPerDot = 5;      // number of positions per line, or columns
+
+var dotPositions = [];
+var linesYSpots = [];
+var numLines = 4;
+var numPositionsToDrawForLine = 4;
+var maxXDrawLine;
+
+var interDotDistanceY;
+var interDotPositionDistanceX;
+var nextLineYSpot;
+
+function setup() {
+	frameRate(30);
+  createCanvas(600, 400);
+	interDotDistanceY = (height/numDots);
+  interDotPositionDistanceX = (width/numPositionsPerDot);
+
+	for (var i = 0; i < numDots; i++) {
+    for (var j = 0; j <= numPositionsPerDot; j++) {
+      var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
+      var currentXPos = j * interDotPositionDistanceX + 0.5 * interDotPositionDistanceX;
+		    dotPositions.push([currentXPos, currentYPos]);
+    }
+	}
+
+  maxDrawLineX = dotPositions[numPositionsToDrawForLine-2][0] + 0.5 * interDotPositionDistanceX;
+
+  nextLineYSpot = [];
+  for (var k = 0; k < numLines; k++) {
+    var currentLineYSpots = [];
+    for (var l = 0; l < numPositionsToDrawForLine; l++) {
+      currentLineYSpots.push(getRandomInt(0, numDots-1));
+    }
+    linesYSpots.push(currentLineYSpots);
+    nextLineYSpot.push(getRandomInt(0, numDots-1))
+  }
+}
+
+function draw() {
+  background(220);
+	// move Dots
+	for (var i = 0; i < dotPositions.length; i++) {
+    dotPositions[i][0] -= 2;
+		if(dotPositions[i][0] < -interDotPositionDistanceX) {  // reset if it left screen
+		  dotPositions[i][0] = width;
+		}
+	}
+
+  // draw maxDrawLineX
+  stroke(color(0, 255, 0));
+  line(maxDrawLineX, 0, maxDrawLineX, height);
+  stroke(color(0));
+
+	// draw dots
+	fill(color(255, 0, 0));
+	for (var j = 0; j < dotPositions.length; j++) {
+		ellipse(dotPositions[j][0], dotPositions[j][1], 5);
+	}
+
+  // advance Y spots
+
+  // draw lines
+  //  - find the current X positions of all points
+  var currentPointXPositions = [];
+  stroke(color(0, 0, 255));
+  for (var l = 0; l <= numPositionsPerDot; l++) {
+      currentPointXPositions[l] = dotPositions[l][0];
+      // draw vertical lines
+      line(currentPointXPositions[l], 0, currentPointXPositions[l], height);
+  }
+  stroke(color(0));
+  // - sort by X values
+  sortWithIndeces(currentPointXPositions);
+  // - draw lines between first numPositionsToDrawForLine points
+
+
+  for (var k = 0; k < numLines; k++) {
+    var thisLineYSpots = linesYSpots[k]; // these are only the indices!
+    print("Line " + k + " last y spots: " + thisLineYSpots.join(",") + ". Next=" + nextLineYSpot[k]);
+
+    var thisLineYPositionsOfSpots = [];
+    for (var l = 0; l < numPositionsToDrawForLine; l++) {
+      thisLineYPositionsOfSpots[l] = thisLineYSpots[l] * interDotDistanceY + 0.5 * interDotDistanceY;
+    }
+    print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
+
+    stroke(color(255/k));
+    line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
+    for (var l = 0; l < numPositionsToDrawForLine; l++) {
+
+      line(currentPointXPositions[l], thisLineYPositionsOfSpots[l], currentPointXPositions[l+1], thisLineYPositionsOfSpots[l+1]);
+    }
+    // Draw line towards next point: compute y position at x position maxDrawLineX
+    var nextY = nextLineYSpot[k] * interDotDistanceY + 0.5 * interDotDistanceY;
+    var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-1];
+    var yDiff = nextY - lastY; 
+    var ascent = yDiff / interDotPositionDistanceX;
+    var xDiff = maxDrawLineX - currentPointXPositions[numPositionsToDrawForLine];
+    var yAtmaxDrawLineX = lastY + (ascent * xDiff);
+    print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +"lastY=" +lastY);
+    fill(color(255, 255, 0));
+    ellipse()
+    line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
+
+  }
+}
+
+function sortWithIndeces(toSort) {
+  for (var i = 0; i < toSort.length; i++) {
+    toSort[i] = [toSort[i], i];
+  }
+  toSort.sort(function(left, right) {
+    return left[0] < right[0] ? -1 : 1;
+  });
+  toSort.sortIndices = [];
+  for (var j = 0; j < toSort.length; j++) {
+    toSort.sortIndices.push(toSort[j][1]);
+    toSort[j] = toSort[j][0];
+  }
+  return toSort;
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
