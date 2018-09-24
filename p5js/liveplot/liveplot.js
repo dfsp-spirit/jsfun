@@ -115,12 +115,13 @@ function draw() {
       print("##### Assertion failed: nextX=" + nextX + ", but lastX + interDotPositionDistanceX=" + (lastX + interDotPositionDistanceX) + ". Should be euqal. #####");
     }
     var yDiff = nextY - lastY;
-    var ascent = yDiff / interDotPositionDistanceX;
-    var xDiff = currentPointXPositions[numPositionsToDrawForLine+1] - maxDrawLineX;
-    var yAtmaxDrawLineX = lastY + (ascent * xDiff);
+    var xDiff = nextX - lastX;
+    var ascent = yDiff / xDiff;
+    var xDiffToMaxDrawLineX = maxDrawLineX - lastX;
+    var yAtmaxDrawLineX = lastY + (ascent * xDiffToMaxDrawLineX);
     line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
     strokeWeight(1);
-    print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +"lastY=" +lastY);
+    print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +", lastY=" +lastY + ". lastX=" + lastX + " ,nextX=" + nextX + ". xDiff=" + xDiff + " (interDotPositionDistanceX=" + interDotPositionDistanceX + "), yDiff=" + yDiff);
 
     fill(color(255,127,80));    // draw current dot in orange (stroke with current line's color)
     ellipse(lastX, lastY, 10);
