@@ -13,6 +13,9 @@ var doDrawCurrentPoints = false;
 var doDrawVerticalLines = true;
 var doDrawMaxDrawXLine = false;
 
+var backGroundColor = 80;
+var verticalLinesColor = 160;
+
 // +++ End of settings ++++
 
 
@@ -52,7 +55,7 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  background(backGroundColor);
 	// move Dots
   var jumpThisFrame = false;
 	for (var i = 0; i < dotPositions.length; i++) {
@@ -93,7 +96,7 @@ function draw() {
   // draw lines
   //  - find the current X positions of all points
   var currentPointXPositions = [];
-  stroke(color(0, 0, 255));
+  stroke(verticalLinesColor);
   for (var l = 0; l <= numPositionsPerDot; l++) {
       currentPointXPositions[l] = dotPositions[l][0];
       // draw vertical lines
