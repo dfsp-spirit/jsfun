@@ -34,19 +34,31 @@ function setup() {
       currentLineYSpots.push(getRandomInt(0, numDots-1));
     }
     linesYSpots.push(currentLineYSpots);
-    nextLineYSpot.push(getRandomInt(0, numDots-1))
+    nextLineYSpot.push(getRandomInt(0, numDots-1));
   }
 }
 
 function draw() {
   background(220);
 	// move Dots
+  var jumpThisFrame = false;
 	for (var i = 0; i < dotPositions.length; i++) {
-    dotPositions[i][0] -= 2;
+    dotPositions[i][0] -= 5;
 		if(dotPositions[i][0] < -interDotPositionDistanceX) {  // reset if it left screen
-		  dotPositions[i][0] = width;
+      var howMuchSmaller = -interDotPositionDistanceX -dotPositions[i][0];
+		  dotPositions[i][0] = width - howMuchSmaller;
+      jumpThisFrame = true;
 		}
 	}
+
+  if(jumpThisFrame) {
+    // draw new random next points for all lines
+    for (var k = 0; k < numLines; k++) {
+      linesYSpots[k].shift();
+      linesYSpots[k].push(nextLineYSpot[k]);
+      nextLineYSpot[k] = (getRandomInt(0, numDots-1));
+    }
+  }
 
   // draw maxDrawLineX
   stroke(color(0, 255, 0));
@@ -77,10 +89,10 @@ function draw() {
 
 
   for (var k = 0; k < numLines; k++) {
-    var thisLineYSpots = linesYSpots[k]; // these are only the indices!
+    var thisLineYSpots = linesYSpots[k]; // these are only the indices, i.e., row numbers
     print("Line " + k + " last y spots: " + thisLineYSpots.join(",") + ". Next=" + nextLineYSpot[k]);
 
-    var thisLineYPositionsOfSpots = [];
+    var thisLineYPositionsOfSpots = []; // y coordinates
     for (var l = 0; l < numPositionsToDrawForLine; l++) {
       thisLineYPositionsOfSpots[l] = thisLineYSpots[l] * interDotDistanceY + 0.5 * interDotDistanceY;
     }
@@ -88,20 +100,27 @@ function draw() {
 
     stroke(color(255/k));
     line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
-    for (var l = 0; l < numPositionsToDrawForLine; l++) {
+    for (var l = 0; l <= numPositionsToDrawForLine; l++) {
 
       line(currentPointXPositions[l], thisLineYPositionsOfSpots[l], currentPointXPositions[l+1], thisLineYPositionsOfSpots[l+1]);
     }
     // Draw line towards next point: compute y position at x position maxDrawLineX
     var nextY = nextLineYSpot[k] * interDotDistanceY + 0.5 * interDotDistanceY;
-    var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-1];
-    var yDiff = nextY - lastY; 
+    var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-2];
+    var lastX = currentPointXPositions[numPositionsToDrawForLine-1];
+    var nextX = currentPointXPositions[numPositionsToDrawForLine];
+    if(nextX != lastX + interDotPositionDistanceX) {
+      print("##### Assertion failed: nextX=" + nextX + ", but lastX + interDotPositionDistanceX=" + (lastX + interDotPositionDistanceX) + ". Should be euqal. #####");
+    }
+    var yDiff = nextY - lastY;
     var ascent = yDiff / interDotPositionDistanceX;
-    var xDiff = maxDrawLineX - currentPointXPositions[numPositionsToDrawForLine];
+    var xDiff = currentPointXPositions[numPositionsToDrawForLine+1] - maxDrawLineX;
     var yAtmaxDrawLineX = lastY + (ascent * xDiff);
     print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +"lastY=" +lastY);
-    fill(color(255, 255, 0));
-    ellipse()
+    fill(color(255,127,80));    // draw current dot in orange (stroke with current line's color)
+    ellipse(lastX, lastY, 10);
+    fill(color(255, 255, 0));   // draw next target in yellow (stroke with current line's color)
+    ellipse(nextX, nextY, 10);
     line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
 
   }
