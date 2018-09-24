@@ -137,17 +137,24 @@ function draw() {
   // draw sum
   if(doDrawSumAtVerticalLineBottom) {
     fill(textColor);
+    var numToSkipAtEnd = numPositionsPerDot - numPositionsToDrawForLine;
+    var sumOfSums = 0;
     for(var m=0; m < currentPointXPositions.sortIndices.length; m++) {
       var idx=currentPointXPositions.sortIndices[m];
       var sumAtLinePosition = 0;
       for(var n=0; n < numLines; n++) {
         sumAtLinePosition += linesYSpots[n][idx];
       }
+      var labelToPlot = " "+sumAtLinePosition;
       if(isNaN(sumAtLinePosition)) {
-        sumAtLinePosition = "";
+        sumAtLinePosition = 0;
+        labelToPlot = "";
       }
-      text(" "+sumAtLinePosition, currentPointXPositions[idx], height - 5);
+      text(labelToPlot, currentPointXPositions[idx], height - 5);
+      sumOfSums += sumAtLinePosition;
     }
+    fill(textColor);
+    text("m="+round(sumOfSums/numLines), width - 35, height - 5);
   }
 
 
