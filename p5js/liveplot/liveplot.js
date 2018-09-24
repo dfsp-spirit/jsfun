@@ -10,6 +10,7 @@ var maxXDrawLine;
 var interDotDistanceY;
 var interDotPositionDistanceX;
 var nextLineYSpot;
+var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000' ];
 
 function setup() {
 	frameRate(30);
@@ -43,7 +44,7 @@ function draw() {
 	// move Dots
   var jumpThisFrame = false;
 	for (var i = 0; i < dotPositions.length; i++) {
-    dotPositions[i][0] -= 5;
+    dotPositions[i][0] -= 2;
 		if(dotPositions[i][0] < -interDotPositionDistanceX) {  // reset if it left screen
       var howMuchSmaller = -interDotPositionDistanceX -dotPositions[i][0];
 		  dotPositions[i][0] = width - howMuchSmaller;
@@ -98,7 +99,8 @@ function draw() {
     }
     print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
 
-    stroke(color(255/k));
+    stroke(color(someColors[k]));
+    strokeWeight(4);
     line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
     for (var l = 0; l <= numPositionsToDrawForLine; l++) {
 
@@ -106,7 +108,7 @@ function draw() {
     }
     // Draw line towards next point: compute y position at x position maxDrawLineX
     var nextY = nextLineYSpot[k] * interDotDistanceY + 0.5 * interDotDistanceY;
-    var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-2];
+    var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-1];
     var lastX = currentPointXPositions[numPositionsToDrawForLine-1];
     var nextX = currentPointXPositions[numPositionsToDrawForLine];
     if(nextX != lastX + interDotPositionDistanceX) {
@@ -116,13 +118,14 @@ function draw() {
     var ascent = yDiff / interDotPositionDistanceX;
     var xDiff = currentPointXPositions[numPositionsToDrawForLine+1] - maxDrawLineX;
     var yAtmaxDrawLineX = lastY + (ascent * xDiff);
+    line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
+    strokeWeight(1);
     print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +"lastY=" +lastY);
+
     fill(color(255,127,80));    // draw current dot in orange (stroke with current line's color)
     ellipse(lastX, lastY, 10);
     fill(color(255, 255, 0));   // draw next target in yellow (stroke with current line's color)
     ellipse(nextX, nextY, 10);
-    line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
-
   }
 }
 
