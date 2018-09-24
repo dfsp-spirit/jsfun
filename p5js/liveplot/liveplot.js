@@ -4,7 +4,7 @@
 // +++ Settings +++
 var numDots = 50;   // number of rows of the field
 var numPositionsPerDot = 20;      // number of target positions per line, or columns (vertical lines)
-var numLines = 15;           // number of plot lines
+var numLines = 15;           // number of the moving, colorful plot lines
 var numPositionsToDrawForLine = 18;
 
 var doDrawPotentialTargetPoints = false;
@@ -17,6 +17,8 @@ var doDrawXLabels = true;
 var doDrawYLabels = true;
 var doDrawSumAtVerticalLineBottom = true;
 
+var doUseMouseAttraction = true;
+
 var backGroundColor = 80;
 var verticalLinesColor = 160;
 var horizontalLinesColor = 160;
@@ -24,7 +26,7 @@ var useTextSize = 8;
 var textColor = 255;
 // +++ End of settings ++++
 
-
+var minDistToTrackedMouseYPos;
 var dotPositions = [];
 var linesYSpots = [];
 var maxXDrawLine;
@@ -57,7 +59,8 @@ function setup() {
       currentLineYSpots.push(getRandomInt(0, numDots-1));
     }
     linesYSpots.push(currentLineYSpots);
-    nextLineYSpot.push(getRandomInt(0, numDots-1));
+    var nextRandomYSpot = getRandomYPositionPotentiallyWithMouseBonus(0, numDots-1);
+    nextLineYSpot.push(nextRandomYSpot);
   }
 }
 
@@ -79,7 +82,7 @@ function draw() {
     for (var k = 0; k < numLines; k++) {
       linesYSpots[k].shift();
       linesYSpots[k].push(nextLineYSpot[k]);
-      nextLineYSpot[k] = (getRandomInt(0, numDots-1));
+      nextLineYSpot[k] = getRandomYPositionPotentiallyWithMouseBonus(0, numDots-1);
     }
   }
 
@@ -157,8 +160,13 @@ function draw() {
     text("m="+round(sumOfSums/numLines), width - 35, height - 5);
   }
 
-
-
+// draw red marker in upper right corner to show user that mouse tracking is active
+if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
+    fill(color(255, 0, 0));
+    ellipse(width -20, 20, 10);
+    stroke(color(255, 0, 0));
+    line(0, mouseY, width, mouseY);
+}
 
   for (var k = 0; k < numLines; k++) {
     var thisLineYSpots = linesYSpots[k]; // these are only the indices, i.e., row numbers
@@ -230,5 +238,31 @@ function sortWithIndeces(toSort) {
 }
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function mouseRoughlyWithFrame() {
+  var border = 10;
+  return mouseX > border && mouseX < (width - border) && mouseY > border && mouseY < (height - border);
+}
+
+function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
+  if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
+    // find y spot closest to mouse position
+    var minDistToMouse = Number.POSITIVE_INFINITY;
+    var minDistIndex = 0;
+    for(var p=0; p < numDots; p++) {
+      var currentYPosDot = p * interDotDistanceY + 0.5 * interDotDistanceY;
+      if(abs(currentYPosDot - mouseY) < minDistToMouse) {
+        minDistToMouse = abs(currentYPosDot - mouseY);
+        minDistIndex = p;
+        minDistToTrackedMouseYPos = currentYPosDot;
+      }
+    }
+    // with a certain probability, draw the line closest to the mouse
+    if(getRandomInt(1, 10) < 4) {
+      return minDistIndex;
+    }
+  }
+  return getRandomInt(min, max);
 }
