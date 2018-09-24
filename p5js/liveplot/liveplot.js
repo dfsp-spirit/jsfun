@@ -3,9 +3,9 @@
 
 // +++ Settings +++
 var numDots = 50;   // number of rows of the field
-var numPositionsPerDot = 5;      // number of target positions per line, or columns (vertical lines)
-var numLines = 15;           // number of plot lines
-var numPositionsToDrawForLine = 4;
+var numPositionsPerDot = 20;      // number of target positions per line, or columns (vertical lines)
+var numLines = 18;           // number of plot lines
+var numPositionsToDrawForLine = 18;
 
 var doDrawPotentialTargetPoints = false;
 var doDrawTargetPoints = false;
@@ -120,7 +120,10 @@ function draw() {
     }
     //print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
 
-    stroke(color(someColors[k]));
+    var colorNoAlpha = color(someColors[k]);
+    var newAlpha = 160;
+    var colorAlpha = color(red(colorNoAlpha), green(colorNoAlpha), blue(colorNoAlpha), newAlpha);
+    stroke(colorAlpha);
     strokeWeight(4);
     line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
     for (var l = 0; l <= numPositionsToDrawForLine; l++) {
