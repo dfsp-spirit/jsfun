@@ -120,13 +120,21 @@ function draw() {
     }
     //print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
 
+
+    var positionShare = currentPointXPositions[0] / width;     // make alpha depend on screen position (less tansparent the more it gets to the right)
     var colorNoAlpha = color(someColors[k]);
-    var newAlpha = 160;
+    var newAlpha = 100 + positionShare * 155;
     var colorAlpha = color(red(colorNoAlpha), green(colorNoAlpha), blue(colorNoAlpha), newAlpha);
     stroke(colorAlpha);
+
     strokeWeight(4);
     line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
     for (var l = 0; l <= numPositionsToDrawForLine; l++) {
+      positionShare = currentPointXPositions[l] / width;     // make alpha depend on screen position (less tansparent the more it gets to the right)
+      colorNoAlpha = color(someColors[k]);
+      newAlpha = 100 + positionShare * 155;
+      colorAlpha = color(red(colorNoAlpha), green(colorNoAlpha), blue(colorNoAlpha), newAlpha);
+      stroke(colorAlpha);
 
       line(currentPointXPositions[l], thisLineYPositionsOfSpots[l], currentPointXPositions[l+1], thisLineYPositionsOfSpots[l+1]);
     }
@@ -155,6 +163,7 @@ function draw() {
   }
 }
 
+// function sortWithIndeces by Dave Aaron Smith, see https://stackoverflow.com/questions/3730510/javascript-sort-array-and-return-an-array-of-indicies-that-indicates-the-positi
 function sortWithIndeces(toSort) {
   for (var i = 0; i < toSort.length; i++) {
     toSort[i] = [toSort[i], i];
