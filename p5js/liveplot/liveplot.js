@@ -1,12 +1,24 @@
-var numDots = 5;   // number of lines or rows
-var numPositionsPerDot = 5;      // number of positions per line, or columns
+// Liveplot.js -- a p5js scene by Tim Schäfer.
+// This is free software, published under the GPLv3 license. No warranties.
+
+// +++ Settings +++
+var numDots = 50;   // number of rows of the field
+var numPositionsPerDot = 5;      // number of target positions per line, or columns (vertical lines)
+var numLines = 15;           // number of plot lines
+var numPositionsToDrawForLine = 4;
+
+var doDrawPotentialTargetPoints = false;
+var doDrawTargetPoints = false;
+var doDrawCurrentPoints = false;
+var doDrawVerticalLines = true;
+var doDrawMaxDrawXLine = false;
+
+// +++ End of settings ++++
+
 
 var dotPositions = [];
 var linesYSpots = [];
-var numLines = 4;
-var numPositionsToDrawForLine = 4;
 var maxXDrawLine;
-
 var interDotDistanceY;
 var interDotPositionDistanceX;
 var nextLineYSpot;
@@ -62,15 +74,19 @@ function draw() {
   }
 
   // draw maxDrawLineX
-  stroke(color(0, 255, 0));
-  line(maxDrawLineX, 0, maxDrawLineX, height);
+  if(doDrawMaxDrawXLine) {
+    stroke(color(0, 255, 0));
+    line(maxDrawLineX, 0, maxDrawLineX, height);
+  }
   stroke(color(0));
 
 	// draw dots
 	fill(color(255, 0, 0));
-	for (var j = 0; j < dotPositions.length; j++) {
-		ellipse(dotPositions[j][0], dotPositions[j][1], 5);
-	}
+  if (doDrawPotentialTargetPoints) {
+	  for (var j = 0; j < dotPositions.length; j++) {
+		  ellipse(dotPositions[j][0], dotPositions[j][1], 5);
+	  }
+  }
 
   // advance Y spots
 
@@ -81,7 +97,9 @@ function draw() {
   for (var l = 0; l <= numPositionsPerDot; l++) {
       currentPointXPositions[l] = dotPositions[l][0];
       // draw vertical lines
-      line(currentPointXPositions[l], 0, currentPointXPositions[l], height);
+      if(doDrawVerticalLines) {
+        line(currentPointXPositions[l], 0, currentPointXPositions[l], height);
+      }
   }
   stroke(color(0));
   // - sort by X values
@@ -91,13 +109,13 @@ function draw() {
 
   for (var k = 0; k < numLines; k++) {
     var thisLineYSpots = linesYSpots[k]; // these are only the indices, i.e., row numbers
-    print("Line " + k + " last y spots: " + thisLineYSpots.join(",") + ". Next=" + nextLineYSpot[k]);
+    //print("Line " + k + " last y spots: " + thisLineYSpots.join(",") + ". Next=" + nextLineYSpot[k]);
 
     var thisLineYPositionsOfSpots = []; // y coordinates
     for (var l = 0; l < numPositionsToDrawForLine; l++) {
       thisLineYPositionsOfSpots[l] = thisLineYSpots[l] * interDotDistanceY + 0.5 * interDotDistanceY;
     }
-    print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
+    //print("Line " + k + " y positions: " + thisLineYPositionsOfSpots.join(","));
 
     stroke(color(someColors[k]));
     strokeWeight(4);
@@ -111,9 +129,6 @@ function draw() {
     var lastY = thisLineYPositionsOfSpots[numPositionsToDrawForLine-1];
     var lastX = currentPointXPositions[numPositionsToDrawForLine-1];
     var nextX = currentPointXPositions[numPositionsToDrawForLine];
-    if(nextX != lastX + interDotPositionDistanceX) {
-      print("##### Assertion failed: nextX=" + nextX + ", but lastX + interDotPositionDistanceX=" + (lastX + interDotPositionDistanceX) + ". Should be euqal. #####");
-    }
     var yDiff = nextY - lastY;
     var xDiff = nextX - lastX;
     var ascent = yDiff / xDiff;
@@ -121,12 +136,16 @@ function draw() {
     var yAtmaxDrawLineX = lastY + (ascent * xDiffToMaxDrawLineX);
     line(currentPointXPositions[numPositionsToDrawForLine-1], lastY, maxDrawLineX, yAtmaxDrawLineX);
     strokeWeight(1);
-    print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +", lastY=" +lastY + ". lastX=" + lastX + " ,nextX=" + nextX + ". xDiff=" + xDiff + " (interDotPositionDistanceX=" + interDotPositionDistanceX + "), yDiff=" + yDiff);
+    //print("Line " + k + ": ascent=" + ascent +", nextY=" + nextY +", lastY=" +lastY + ". lastX=" + lastX + " ,nextX=" + nextX + ". xDiff=" + xDiff + " (interDotPositionDistanceX=" + interDotPositionDistanceX + "), yDiff=" + yDiff);
 
-    fill(color(255,127,80));    // draw current dot in orange (stroke with current line's color)
-    ellipse(lastX, lastY, 10);
-    fill(color(255, 255, 0));   // draw next target in yellow (stroke with current line's color)
-    ellipse(nextX, nextY, 10);
+    if(doDrawCurrentPoints) {
+      fill(color(255,127,80));    // draw current dot in orange (stroke with current line's color)
+      ellipse(lastX, lastY, 10);
+    }
+    if(doDrawTargetPoints) {
+      fill(color(255, 255, 0));   // draw next target in yellow (stroke with current line's color)
+      ellipse(nextX, nextY, 10);
+    }
   }
 }
 
