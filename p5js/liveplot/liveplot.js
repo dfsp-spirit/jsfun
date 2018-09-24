@@ -1,10 +1,11 @@
-// Liveplot.js -- a p5js scene by Tim Schäfer.
+// Liveplot.js -- a p5js scene by Tim Schäfer. Just for fun.
+// See http://rcmd.org/ts or http://github.com/dfsp-spirit/
 // This is free software, published under the GPLv3 license. No warranties.
 
 // +++ Settings +++
 var numDots = 50;   // number of rows of the field
 var numPositionsPerDot = 20;      // number of target positions per line, or columns (vertical lines)
-var numLines = 15;           // number of the moving, colorful plot lines
+var numLines = 15;           // number of the moving, colorful plot lines. If you want many, you may need to add more colors to the 'someColors' var below.
 var numPositionsToDrawForLine = 18;
 
 var doDrawPotentialTargetPoints = false;
