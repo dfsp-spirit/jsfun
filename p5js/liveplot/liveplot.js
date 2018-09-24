@@ -4,18 +4,24 @@
 // +++ Settings +++
 var numDots = 50;   // number of rows of the field
 var numPositionsPerDot = 20;      // number of target positions per line, or columns (vertical lines)
-var numLines = 18;           // number of plot lines
+var numLines = 15;           // number of plot lines
 var numPositionsToDrawForLine = 18;
 
 var doDrawPotentialTargetPoints = false;
 var doDrawTargetPoints = false;
 var doDrawCurrentPoints = false;
-var doDrawVerticalLines = true;
+var doDrawVerticalGridLines = true;
+var doDrawHorizontalGridLines = true;
 var doDrawMaxDrawXLine = false;
+var doDrawXLabels = true;
+var doDrawYLabels = true;
+var doDrawSumAtVerticalLineBottom = true;
 
 var backGroundColor = 80;
 var verticalLinesColor = 160;
-
+var horizontalLinesColor = 160;
+var useTextSize = 8;
+var textColor = 255;
 // +++ End of settings ++++
 
 
@@ -30,12 +36,13 @@ var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb
 function setup() {
 	frameRate(30);
   createCanvas(600, 400);
+  textSize(useTextSize);
 	interDotDistanceY = (height/numDots);
   interDotPositionDistanceX = (width/numPositionsPerDot);
 
 	for (var i = 0; i < numDots; i++) {
+    var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
     for (var j = 0; j <= numPositionsPerDot; j++) {
-      var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
       var currentXPos = j * interDotPositionDistanceX + 0.5 * interDotPositionDistanceX;
 		    dotPositions.push([currentXPos, currentYPos]);
     }
@@ -76,6 +83,18 @@ function draw() {
     }
   }
 
+  if(doDrawYLabels || doDrawHorizontalGridLines) {
+    fill(textColor);
+    for (var i = 0; i < numDots; i++) {
+      if(i > 0 && i % floor(numDots/10) == 0) {
+        var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
+        text(""+i, width -15, currentYPos);
+        stroke(horizontalLinesColor);
+        line(0, currentYPos, width, currentYPos);
+      }
+    }
+	}
+
   // draw maxDrawLineX
   if(doDrawMaxDrawXLine) {
     stroke(color(0, 255, 0));
@@ -91,6 +110,8 @@ function draw() {
 	  }
   }
 
+
+
   // advance Y spots
 
   // draw lines
@@ -98,16 +119,38 @@ function draw() {
   var currentPointXPositions = [];
   stroke(verticalLinesColor);
   for (var l = 0; l <= numPositionsPerDot; l++) {
-      currentPointXPositions[l] = dotPositions[l][0];
-      // draw vertical lines
-      if(doDrawVerticalLines) {
-        line(currentPointXPositions[l], 0, currentPointXPositions[l], height);
-      }
+    currentPointXPositions[l] = dotPositions[l][0];
+    if(doDrawXLabels) {
+      fill(textColor);
+      text(" "+l, currentPointXPositions[l], 10);
+    }
+    // draw vertical lines
+    if(doDrawVerticalGridLines) {
+      line(currentPointXPositions[l], 0, currentPointXPositions[l], height);
+    }
   }
   stroke(color(0));
   // - sort by X values
   sortWithIndeces(currentPointXPositions);
   // - draw lines between first numPositionsToDrawForLine points
+
+  // draw sum
+  if(doDrawSumAtVerticalLineBottom) {
+    fill(textColor);
+    for(var m=0; m < currentPointXPositions.sortIndices.length; m++) {
+      var idx=currentPointXPositions.sortIndices[m];
+      var sumAtLinePosition = 0;
+      for(var n=0; n < numLines; n++) {
+        sumAtLinePosition += linesYSpots[n][idx];
+      }
+      if(isNaN(sumAtLinePosition)) {
+        sumAtLinePosition = "";
+      }
+      text(" "+sumAtLinePosition, currentPointXPositions[idx], height - 5);
+    }
+  }
+
+
 
 
   for (var k = 0; k < numLines; k++) {
