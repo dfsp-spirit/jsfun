@@ -33,10 +33,12 @@ var textColor = 255;
 var minDistToTrackedMouseYPos;
 var dotPositions = [];
 var linesYSpots = [];
+var linesAlive = [];
 var maxXDrawLine;
 var interDotDistanceY;
 var interDotPositionDistanceX;
 var nextLineYSpot;
+var numJumps = 0;
 var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000' ];
 
 function setup() {
@@ -54,6 +56,8 @@ function setup() {
     }
 	}
 
+
+
   maxDrawLineX = dotPositions[numPositionsToDrawForLine-2][0] + 0.5 * interDotPositionDistanceX;
 
   nextLineYSpot = [];
@@ -65,6 +69,22 @@ function setup() {
     linesYSpots.push(currentLineYSpots);
     var nextRandomYSpot = getRandomYPositionPotentiallyWithMouseBonus(0, numDots-1);
     nextLineYSpot.push(nextRandomYSpot);
+  }
+
+  // fill alive data for lines
+  for(var b=0; b < numLinesMax; b++) {
+    var currentLineAlive = [];
+    if(b < numLines) {
+      for (var l = 0; l < numPositionsToDrawForLine; l++) {
+        currentLineAlive.push(true);
+      }
+    }
+    else {
+      for (var l = 0; l < numPositionsToDrawForLine; l++) {
+        currentLineAlive.push(false);
+      }
+    }
+    linesAlive.push(currentLineAlive);
   }
 }
 
@@ -81,9 +101,7 @@ function addLine() {
 
 function draw() {
   background(backGroundColor);
-  if(doAddLinesOverTime && (frameCount % 100 == 0) && numLines < numLinesMax) {
-    addLine();
-  }
+
 	// move Dots
   var jumpThisFrame = false;
 	for (var i = 0; i < dotPositions.length; i++) {
@@ -96,11 +114,25 @@ function draw() {
 	}
 
   if(jumpThisFrame) {
-    // draw new random next points for all lines
+    numJumps++;
+    if(doAddLinesOverTime && numJumps % 5 == 0 && numLines < numLinesMax) {
+      addLine();
+    }
+    // chose new random next points for all lines
     for (var k = 0; k < numLines; k++) {
       linesYSpots[k].shift();
       linesYSpots[k].push(nextLineYSpot[k]);
       nextLineYSpot[k] = getRandomYPositionPotentiallyWithMouseBonus(0, numDots-1);
+    }
+    // update alive data
+    for (var b = 0; b < numLinesMax; b++) {
+      linesAlive[b].shift();
+      if(b < numLines) {
+        linesAlive[b].push(true);
+      }
+      else {
+        linesAlive[b].push(false);
+      }
     }
   }
 
@@ -116,6 +148,7 @@ function draw() {
       }
     }
 	}
+
 
   if(doDrawLineCount) {
     noStroke();
@@ -177,20 +210,25 @@ function draw() {
       var sumAtLinePosition = 0;
       var allValuesAtLinePosition = [];
       for(var n=0; n < numLines; n++) {
-        sumAtLinePosition += linesYSpots[n][idx];
-        allValuesAtLinePosition.push(linesYSpots[n][idx]);
+        if(linesAlive[n][idx]) {
+          sumAtLinePosition += linesYSpots[n][idx];
+          allValuesAtLinePosition.push(linesYSpots[n][idx]);
+        }
+
       }
       if(doDrawStandardDeviation) {
         var stdDev = allValuesAtLinePosition.stanDeviate();
+        var meanVal = floor(sumAtLinePosition / allValuesAtLinePosition.length);
+        var meanValueYPos = meanVal * interDotDistanceY + 0.5 * interDotDistanceY;
         strokeWeight(10);
         stroke(color('rgba(255, 0, 0, 0.3)'));
         var yCenter = height/2;
-        line(currentPointXPositions[idx], yCenter-stdDev, currentPointXPositions[idx], yCenter+stdDev);
+        line(currentPointXPositions[idx], meanValueYPos-stdDev, currentPointXPositions[idx], meanValueYPos+stdDev);
       }
       noStroke();
 
       var labelToPlot = " "+sumAtLinePosition;
-      if(isNaN(sumAtLinePosition)) {
+      if(isNaN(sumAtLinePosition) || allValuesAtLinePosition.length == 0) {
         sumAtLinePosition = 0;
         labelToPlot = "";
       }
@@ -311,8 +349,10 @@ function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
   return getRandomInt(min, max);
 }
 
-// function by cssimsek, see https://stackoverflow.com/questions/7343890/standard-deviation-javascript
 Array.prototype.stanDeviate = function(){
+  if(this.length == 0) {
+    return 0;
+  }
    var i,j,total = 0, mean = 0, diffSqredArr = [];
    for(i=0;i<this.length;i+=1){
        total+=this[i];
