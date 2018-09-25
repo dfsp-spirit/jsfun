@@ -1,11 +1,11 @@
-// Liveplot.js -- a p5js scene by Tim Schäfer. Just for fun.
-// See http://rcmd.org/ts or http://github.com/dfsp-spirit/
+// Liveplot.js -- a p5js scene by Tim Schäfer.
 // This is free software, published under the GPLv3 license. No warranties.
 
 // +++ Settings +++
 var numDots = 50;   // number of rows of the field
 var numPositionsPerDot = 20;      // number of target positions per line, or columns (vertical lines)
-var numLines = 15;           // number of the moving, colorful plot lines. If you want many, you may need to add more colors to the 'someColors' var below.
+var numLines = 1;           // number of the moving, colorful plot lines at start of animation
+var numLinesMax = 20;     // max number of lines, only used if doAddLinesOverTime is true
 var numPositionsToDrawForLine = 18;
 
 var doDrawPotentialTargetPoints = false;
@@ -17,12 +17,15 @@ var doDrawMaxDrawXLine = false;
 var doDrawXLabels = true;
 var doDrawYLabels = true;
 var doDrawSumAtVerticalLineBottom = true;
+var doDrawStandardDeviation = true;
+var doAddLinesOverTime = true;
+var doDrawLineCount = true;
 
 var doUseMouseAttraction = true;
 
-var backGroundColor = 80;
-var verticalLinesColor = 160;
-var horizontalLinesColor = 160;
+var backGroundColor = 40;
+var verticalLinesColor = 80;
+var horizontalLinesColor = 80;
 var useTextSize = 8;
 var textColor = 255;
 // +++ End of settings ++++
@@ -38,7 +41,7 @@ var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb
 
 function setup() {
 	frameRate(30);
-  createCanvas(600, 400);
+  createCanvas(800, 400);
   textSize(useTextSize);
 	interDotDistanceY = (height/numDots);
   interDotPositionDistanceX = (width/numPositionsPerDot);
@@ -65,8 +68,22 @@ function setup() {
   }
 }
 
+function addLine() {
+  numLines += 1;
+  var currentLineYSpots = [];
+  for (var l = 0; l < numPositionsToDrawForLine; l++) {
+    currentLineYSpots.push(0);
+  }
+  linesYSpots.push(currentLineYSpots);
+  var nextRandomYSpot = getRandomYPositionPotentiallyWithMouseBonus(0, numDots-1);
+  nextLineYSpot.push(nextRandomYSpot);
+}
+
 function draw() {
   background(backGroundColor);
+  if(doAddLinesOverTime && (frameCount % 100 == 0) && numLines < numLinesMax) {
+    addLine();
+  }
 	// move Dots
   var jumpThisFrame = false;
 	for (var i = 0; i < dotPositions.length; i++) {
@@ -92,12 +109,24 @@ function draw() {
     for (var i = 0; i < numDots; i++) {
       if(i > 0 && i % floor(numDots/10) == 0) {
         var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
+        noStroke();
         text(""+i, width -15, currentYPos);
         stroke(horizontalLinesColor);
         line(0, currentYPos, width, currentYPos);
       }
     }
 	}
+
+  if(doDrawLineCount) {
+    noStroke();
+    fill(textColor);
+    if(numLines < numLinesMax) {
+      text(""+numLines+" / " + numLinesMax, width -35, height -20);
+    }
+    else {
+      text(""+numLines, width -35, height -20);
+    }
+  }
 
   // draw maxDrawLineX
   if(doDrawMaxDrawXLine) {
@@ -146,9 +175,20 @@ function draw() {
     for(var m=0; m < currentPointXPositions.sortIndices.length; m++) {
       var idx=currentPointXPositions.sortIndices[m];
       var sumAtLinePosition = 0;
+      var allValuesAtLinePosition = [];
       for(var n=0; n < numLines; n++) {
         sumAtLinePosition += linesYSpots[n][idx];
+        allValuesAtLinePosition.push(linesYSpots[n][idx]);
       }
+      if(doDrawStandardDeviation) {
+        var stdDev = allValuesAtLinePosition.stanDeviate();
+        strokeWeight(10);
+        stroke(color('rgba(255, 0, 0, 0.3)'));
+        var yCenter = height/2;
+        line(currentPointXPositions[idx], yCenter-stdDev, currentPointXPositions[idx], yCenter+stdDev);
+      }
+      noStroke();
+
       var labelToPlot = " "+sumAtLinePosition;
       if(isNaN(sumAtLinePosition)) {
         sumAtLinePosition = 0;
@@ -163,10 +203,13 @@ function draw() {
 
 // draw red marker in upper right corner to show user that mouse tracking is active
 if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
-    fill(color(255, 0, 0));
-    ellipse(width -20, 20, 10);
-    stroke(color(255, 0, 0));
-    line(0, mouseY, width, mouseY);
+  strokeWeight(2);
+  stroke(color(150, 0, 0));
+  fill(color(255, 0, 0));
+  ellipse(width -20, 20, 10);
+  strokeWeight(1);
+  stroke(color(255, 0, 0));
+  line(0, mouseY, width, mouseY);
 }
 
   for (var k = 0; k < numLines; k++) {
@@ -261,9 +304,24 @@ function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
       }
     }
     // with a certain probability, draw the line closest to the mouse
-    if(getRandomInt(1, 10) < 4) {
+    if(getRandomInt(1, 10) < 8) {
       return minDistIndex;
     }
   }
   return getRandomInt(min, max);
 }
+
+// function by cssimsek, see https://stackoverflow.com/questions/7343890/standard-deviation-javascript
+Array.prototype.stanDeviate = function(){
+   var i,j,total = 0, mean = 0, diffSqredArr = [];
+   for(i=0;i<this.length;i+=1){
+       total+=this[i];
+   }
+   mean = total/this.length;
+   for(j=0;j<this.length;j+=1){
+       diffSqredArr.push(Math.pow((this[j]-mean),2));
+   }
+   return (Math.sqrt(diffSqredArr.reduce(function(firstEl, nextEl){
+            return firstEl + nextEl;
+          })/this.length));
+};
