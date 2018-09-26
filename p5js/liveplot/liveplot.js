@@ -14,9 +14,9 @@ var doDrawCurrentPoints = false;
 var doDrawVerticalGridLines = true;
 var doDrawHorizontalGridLines = true;
 var doDrawMaxDrawXLine = false;
-var doDrawXLabels = true;
 var doDrawYLabels = true;
 var doDrawSumAtVerticalLineBottom = true;
+var doDrawMean = true;
 var doDrawStandardDeviation = true;
 var doAddLinesOverTime = true;
 var doDrawLineCount = true;
@@ -39,6 +39,7 @@ var interDotDistanceY;
 var interDotPositionDistanceX;
 var nextLineYSpot;
 var numJumps = 0;
+var doDrawXLabels = false; // debug only
 var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000' ];
 
 function setup() {
@@ -188,7 +189,7 @@ function draw() {
     currentPointXPositions[l] = dotPositions[l][0];
     if(doDrawXLabels) {
       fill(textColor);
-      text(" "+l, currentPointXPositions[l], 10);
+      text(" "+l, currentPointXPositions[l], 20);
     }
     // draw vertical lines
     if(doDrawVerticalGridLines) {
@@ -201,7 +202,7 @@ function draw() {
   // - draw lines between first numPositionsToDrawForLine points
 
   // draw sum
-  if(doDrawSumAtVerticalLineBottom) {
+  if(doDrawSumAtVerticalLineBottom || doDrawMean || doDrawStandardDeviation) {
     fill(textColor);
     var numToSkipAtEnd = numPositionsPerDot - numPositionsToDrawForLine;
     var sumOfSums = 0;
@@ -216,9 +217,9 @@ function draw() {
         }
 
       }
+      var meanVal = floor(sumAtLinePosition / allValuesAtLinePosition.length);
       if(doDrawStandardDeviation) {
         var stdDev = allValuesAtLinePosition.stanDeviate();
-        var meanVal = floor(sumAtLinePosition / allValuesAtLinePosition.length);
         var meanValueYPos = meanVal * interDotDistanceY + 0.5 * interDotDistanceY;
 
         // draw vertical sddev line
@@ -233,12 +234,19 @@ function draw() {
       }
       noStroke();
 
-      var labelToPlot = " "+sumAtLinePosition;
+      var sumLabelToPlot = " "+sumAtLinePosition;
+      var meanLabelToPlot = " "+meanVal;
       if(isNaN(sumAtLinePosition) || allValuesAtLinePosition.length == 0) {
         sumAtLinePosition = 0;
-        labelToPlot = "";
+        sumLabelToPlot = "";
+        meanLabelToPlot = "";
       }
-      text(labelToPlot, currentPointXPositions[idx], height - 5);
+      if(doDrawSumAtVerticalLineBottom) {
+        text(sumLabelToPlot, currentPointXPositions[idx], height - 5);
+      }
+      if(doDrawMean) {
+        text(meanLabelToPlot, currentPointXPositions[idx], 10);
+      }
       sumOfSums += sumAtLinePosition;
     }
     fill(textColor);
@@ -359,7 +367,6 @@ function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
   }
   return randomIndex;
 }
-
 // function by cssimsek, see https://stackoverflow.com/questions/7343890/standard-deviation-javascript
 Array.prototype.stanDeviate = function(){
   if(this.length == 0) {
