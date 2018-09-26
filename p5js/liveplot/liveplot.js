@@ -246,7 +246,7 @@ function draw() {
   }
 
 // draw red marker in upper right corner to show user that mouse tracking is active
-if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
+if(doUseMouseAttraction && mouseRoughlyWithinFrame()) {
   strokeWeight(2);
   stroke(color(150, 0, 0));
   fill(color(255, 0, 0));
@@ -330,13 +330,14 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function mouseRoughlyWithFrame() {
+function mouseRoughlyWithinFrame() {
   var border = 10;
   return mouseX > border && mouseX < (width - border) && mouseY > border && mouseY < (height - border);
 }
 
 function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
-  if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
+  var randomIndex = getRandomInt(min, max);
+  if(doUseMouseAttraction && mouseRoughlyWithinFrame()) {
     // find y spot closest to mouse position
     var minDistToMouse = Number.POSITIVE_INFINITY;
     var minDistIndex = 0;
@@ -348,14 +349,18 @@ function getRandomYPositionPotentiallyWithMouseBonus(min, max) {
         minDistToTrackedMouseYPos = currentYPosDot;
       }
     }
-    // with a certain probability, draw the line closest to the mouse
-    if(getRandomInt(1, 10) < 8) {
-      return minDistIndex;
+    // with a certain probability, draw move the random point towards the mouse
+    if(getRandomInt(1, 10) < 9) {
+      var distanceRandomIndexToClosestToMouseIndex = minDistIndex - randomIndex;
+      var distanceToMoveTowardsMouseIndex = floor(distanceRandomIndexToClosestToMouseIndex/2);
+      var adjustedIndex = randomIndex + distanceToMoveTowardsMouseIndex
+      return adjustedIndex;
     }
   }
-  return getRandomInt(min, max);
+  return randomIndex;
 }
 
+// function by cssimsek, see https://stackoverflow.com/questions/7343890/standard-deviation-javascript
 Array.prototype.stanDeviate = function(){
   if(this.length == 0) {
     return 0;
