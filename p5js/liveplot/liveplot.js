@@ -220,10 +220,16 @@ function draw() {
         var stdDev = allValuesAtLinePosition.stanDeviate();
         var meanVal = floor(sumAtLinePosition / allValuesAtLinePosition.length);
         var meanValueYPos = meanVal * interDotDistanceY + 0.5 * interDotDistanceY;
+
+        // draw vertical sddev line
         strokeWeight(10);
         stroke(color('rgba(255, 0, 0, 0.3)'));
-        var yCenter = height/2;
         line(currentPointXPositions[idx], meanValueYPos-stdDev, currentPointXPositions[idx], meanValueYPos+stdDev);
+
+        // draw short horizontal line mean line (inside the whide stddev line) with less alpha
+        strokeWeight(2);
+        stroke(color('rgba(255, 0, 0, 0.6)'));
+        line(currentPointXPositions[idx]-4, meanValueYPos, currentPointXPositions[idx]+4, meanValueYPos);
       }
       noStroke();
 
@@ -270,13 +276,14 @@ if(doUseMouseAttraction && mouseRoughlyWithFrame()) {
     strokeWeight(4);
     line(0, thisLineYPositionsOfSpots[0], currentPointXPositions[0], thisLineYPositionsOfSpots[0]);
     for (var l = 0; l <= numPositionsToDrawForLine; l++) {
-      positionShare = currentPointXPositions[l] / width;     // make alpha depend on screen position (less tansparent the more it gets to the right)
-      colorNoAlpha = color(someColors[k]);
-      newAlpha = 100 + positionShare * 155;
-      colorAlpha = color(red(colorNoAlpha), green(colorNoAlpha), blue(colorNoAlpha), newAlpha);
-      stroke(colorAlpha);
-
-      line(currentPointXPositions[l], thisLineYPositionsOfSpots[l], currentPointXPositions[l+1], thisLineYPositionsOfSpots[l+1]);
+      if(linesAlive[k][l]) {
+        positionShare = currentPointXPositions[l] / width;     // make alpha depend on screen position (less tansparent the more it gets to the right)
+        colorNoAlpha = color(someColors[k]);
+        newAlpha = 100 + positionShare * 155;
+        colorAlpha = color(red(colorNoAlpha), green(colorNoAlpha), blue(colorNoAlpha), newAlpha);
+        stroke(colorAlpha);
+        line(currentPointXPositions[l], thisLineYPositionsOfSpots[l], currentPointXPositions[l+1], thisLineYPositionsOfSpots[l+1]);
+      }
     }
     // Draw line towards next point: compute y position at x position maxDrawLineX
     var nextY = nextLineYSpot[k] * interDotDistanceY + 0.5 * interDotDistanceY;
