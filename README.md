@@ -8,4 +8,4 @@ You can see my `liveplot` p5js script in action at the [p5js online editor websi
 
 ## License
 
-Assume MIT unless the script header says something different.
+Should be mentioned in the script header. If not, assume MIT.
