@@ -15,6 +15,10 @@
 //              You can tweak various visual properties of the scene in the settings section at the top of the script.
 
 // +++ Settings +++
+var fps = 30;                       // desired frame rate
+var render_width = 800;             // width of the canvas
+var render_height = 400;            // height of the canvas
+
 var numDots = 50; 											// number of rows of the field, i.e., y positions a line can randomly select as a value
 var numPositionsPerDot = 20; 						// number of target positions per line, or columns (vertical lines)
 var numLines = 1; 											// number of the moving, colorful plot lines at start of animation
@@ -56,8 +60,8 @@ var doDrawXLabels = false; // debug only
 var someColors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
 
 function setup() {
-  frameRate(30);
-  createCanvas(800, 400);
+  frameRate(fps);
+  createCanvas(render_width, render_height);
   textSize(useTextSize);
   interDotDistanceY = (height / numDots);
   interDotPositionDistanceX = (width / numPositionsPerDot);
