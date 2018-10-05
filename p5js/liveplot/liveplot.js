@@ -2,30 +2,40 @@
 // Copyright Tim Schäfer, 2018
 // This is free software, published under the MIT license. No warranties. See https://opensource.org/licenses/MIT
 // See https://github.com/dfsp-spirit/web/blob/master/p5js/liveplot/liveplot.js for the latest version.
+//
+// Explanation: This is a visualisation of random data as a 2-D line plot. An increasing number of lines are plotted in
+//              2D. By default, each lines randomly selects new y values, but you can place the mouse into the scene to
+//              attract the lines to the cursor's y position with a certain probability.
+//
+//              While the number of lines increases or you interact with the plot, you can observe the change in the mean
+//              values (top) and the sum (bottom) at each x position. In the lower right corner, the number of lines and
+//              the mean over all sums are displayed.
+//
+//              You can tweak various visual properties of the scene in the settings section at the top of the script.
 
 // +++ Settings +++
-var numDots = 50; // number of rows of the field
-var numPositionsPerDot = 20; // number of target positions per line, or columns (vertical lines)
-var numLines = 1; // number of the moving, colorful plot lines at start of animation
-var numLinesMax = 20; // max number of lines, only used if doAddLinesOverTime is true
-var numPositionsToDrawForLine = 18;
+var numDots = 50; 											// number of rows of the field, i.e., y positions a line can randomly select as a value
+var numPositionsPerDot = 20; 						// number of target positions per line, or columns (vertical lines)
+var numLines = 1; 											// number of the moving, colorful plot lines at start of animation
+var numLinesMax = 20; 									// max number of lines, only used if doAddLinesOverTime is true
+var numPositionsToDrawForLine = 18;    	// number of vertical lines, i.e., number of x positions of a line, are drawn on the canvas
 
-var doDrawPotentialTargetPoints = false;
-var doDrawTargetPoints = false;
-var doDrawCurrentPoints = false;
-var doDrawVerticalGridLines = true;
-var doDrawHorizontalGridLines = true;
-var doDrawMaxDrawXLine = false;
-var doDrawYLabels = true;
-var doDrawSumAtVerticalLineBottom = true;
-var doDrawMean = true;
-var doDrawStandardDeviation = true;
-var doAddLinesOverTime = true;
-var doDrawLineCount = true;
+var doDrawPotentialTargetPoints = false;		// whether to draw a thick point at all potential target points a line can move to
+var doDrawTargetPoints = false;							// whether to draw a thick point at the next position a line will move to next
+var doDrawCurrentPoints = false;						// whether to draw a thick point at the currently active line point
+var doDrawVerticalGridLines = true;					// whether to draw vertical grid lines, I guess
+var doDrawHorizontalGridLines = false;      // ...horizontal...
+var doDrawMaxDrawXLine = false;							// whether to draw a line at the tip of the moving lines
+var doDrawYLabels = true;										// whether to draw vertical labels with the values at the y axis
+var doDrawSumAtVerticalLineBottom = true;   // draws sum over the y values of all lines at each x position (vertical grid line)
+var doDrawMean = true;                      // draws a small, horizontal red line into the plot at the mean for each x position (vertical grid line)
+var doDrawStandardDeviation = true;					// draws a partly transparent, thick, vertical red line into the plot at the mean for each x position (vertical grid line). The line lengths is the standard deviation at that x position.
+var doAddLinesOverTime = true;              // whether new lines should be added up to numLinesMax if less lines exist
+var doDrawLineCount = true;                 // draws a line counter in the lower right corner of the plot.
 
-var doUseMouseAttraction = true;
+var doUseMouseAttraction = true;            // whether lines should be attracted by the cursor
 
-var backGroundColor = 40;
+var backGroundColor = 40;                   // these are self-explanatory, I guess
 var verticalLinesColor = 80;
 var horizontalLinesColor = 80;
 var useTextSize = 8;
@@ -143,10 +153,14 @@ function draw() {
     for (var i = 0; i < numDots; i++) {
       if (i > 0 && i % floor(numDots / 10) == 0) {
         var currentYPos = i * interDotDistanceY + 0.5 * interDotDistanceY;
-        noStroke();
-        text("" + i, width - 15, currentYPos);
-        stroke(horizontalLinesColor);
-        line(0, currentYPos, width, currentYPos);
+        if(doDrawYLabels) {
+        	noStroke();
+        	text("" + i, width - 15, currentYPos);
+        }
+        if(doDrawHorizontalGridLines) {
+        	stroke(horizontalLinesColor);
+        	line(0, currentYPos, width, currentYPos);
+        }
       }
     }
   }
