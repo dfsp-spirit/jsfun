@@ -1,7 +1,8 @@
 // Liveplot.js -- an interactive p5js live plotting scene.
-// Copyright Tim Schäfer, 2018
+// Copyright Tim Schäfer, 2018 -- http://rcmd.org/ts
 // This is free software, published under the MIT license. No warranties. See https://opensource.org/licenses/MIT
 // See https://github.com/dfsp-spirit/web/blob/master/p5js/liveplot/liveplot.js for the latest version.
+// You can see this script in action at https://editor.p5js.org/animationspirit/sketches/HywUTkBt7
 //
 // Explanation: This is a visualisation of random data as a 2-D line plot. An increasing number of lines are plotted in
 //              2D. By default, each lines randomly selects new y values, but you can place the mouse into the scene to
