@@ -1,5 +1,5 @@
-# web
-A collection of fun web stuff I played around with. Mostly visualizations in p5js and processing.
+# jsfun
+A collection of fun web stuff I played around with. Mostly visualizations in [p5js](https://p5js.org/) and [processing](http://processingjs.org/).
 
 
 ## Visualizations in action
